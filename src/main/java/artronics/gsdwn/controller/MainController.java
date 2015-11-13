@@ -1,17 +1,12 @@
 package artronics.gsdwn.controller;
 
-import artronics.chaparMini.Chapar;
-import artronics.chaparMini.exceptions.ChaparConnectionException;
-import artronics.gsdwn.log.Log;
+import artronics.gsdwn.packet.Packet;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class MainController
+public class MainController implements Controller
 {
-    public static void main(String[] args){
-
-    }
-    public void start(){
+    @Override
+    public Packet processPacket(Packet packet)
+    {
+        return null;
     }
 }
