@@ -4,5 +4,5 @@ import artronics.gsdwn.packet.Packet;
 
 public interface Controller
 {
-    Packet processPacket(Packet packet);
+    void processPacket(Packet packet);
 }

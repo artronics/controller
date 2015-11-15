@@ -12,22 +12,26 @@ public class StatisticsImpl implements Statistics
 
     private LinkedList<Packet> queue = new LinkedList<>();
 
+    private volatile boolean isStarted = true;
+
     @Override
     public void run()
     {
-        while (!queue.isEmpty()) {
-            Packet packet = queue.poll();
-            int addr = packet.getSource();
-            PerNodeStatistics st = null;
+        while (isStarted) {
+            while (!queue.isEmpty()) {
+                Packet packet = queue.poll();
+                int addr = packet.getSource();
+                PerNodeStatistics st = null;
 
-            if (!nodes.containsKey(addr)) {
-                st = new PerNodeStatistics();
-                nodes.put(addr, st);
-            }else {
-                st = nodes.get(addr);
+                if (!nodes.containsKey(addr)) {
+                    st = new PerNodeStatistics();
+                    nodes.put(addr, st);
+                }else {
+                    st = nodes.get(addr);
+                }
+
+                processPacket(packet, st);
             }
-
-            processPacket(packet, st);
         }
     }
 
@@ -55,6 +59,7 @@ public class StatisticsImpl implements Statistics
     {
         SdwnReportPacket rPacket = packet;
         st.battery = rPacket.getBattery();
+        System.out.println(Thread.currentThread().getName() + "bat " + st.battery);
     }
 
     class PerNodeStatistics

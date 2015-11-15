@@ -9,6 +9,8 @@ public class NetworkMapUpdater implements Runnable
     private final NetworkMap networkMap;
     private final LinkedList<SdwnReportPacket> queue = new LinkedList<>();
 
+    private volatile boolean isStarted = true;
+
     public NetworkMapUpdater(NetworkMap networkMap)
     {
         this.networkMap = networkMap;
@@ -23,13 +25,15 @@ public class NetworkMapUpdater implements Runnable
     @Override
     public void run()
     {
-        while (!queue.isEmpty()) {
-            updateMap(queue.poll());
+        while (isStarted) {
+            while (!queue.isEmpty()) {
+                updateMap(queue.poll());
+            }
         }
     }
 
     private void updateMap(SdwnReportPacket packet)
     {
-
+        System.out.println(Thread.currentThread().getName() + " update map");
     }
 }
