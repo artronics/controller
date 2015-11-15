@@ -1,25 +1,39 @@
 package artronics.gsdwn.statistics;
 
 import artronics.gsdwn.packet.Packet;
+import artronics.gsdwn.packet.PoisonPacket;
 import artronics.gsdwn.packet.SdwnReportPacket;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
 
 public class StatisticsImpl implements Statistics
 {
+    private final static Packet POISON_PILL = new PoisonPacket();
+    private final BlockingQueue<Packet> queue;
+
     private final HashMap<Integer, PerNodeStatistics> nodes = new HashMap<>();
 
-    private LinkedList<Packet> queue = new LinkedList<>();
+    public StatisticsImpl(BlockingQueue<Packet> queue)
+    {
+        this.queue = queue;
+    }
 
-    private volatile boolean isStarted = true;
+    @Override
+    public void stop()
+    {
+        queue.add(POISON_PILL);
+    }
 
     @Override
     public void run()
     {
-        while (isStarted) {
-            while (!queue.isEmpty()) {
-                Packet packet = queue.poll();
+        while (true) {
+            try {
+                Packet packet = queue.take();
+                if (packet == POISON_PILL)
+                    break;
+
                 int addr = packet.getSource();
                 PerNodeStatistics st = null;
 
@@ -31,14 +45,11 @@ public class StatisticsImpl implements Statistics
                 }
 
                 processPacket(packet, st);
+
+            }catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void addPacket(Packet packet)
-    {
-        queue.add(packet);
     }
 
     @Override

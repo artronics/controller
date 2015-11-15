@@ -2,7 +2,7 @@ package artronics.gsdwn.controller;
 
 import artronics.gsdwn.packet.Packet;
 
-public interface Controller
+public interface Controller extends Runnable
 {
     void processPacket(Packet packet);
 }
