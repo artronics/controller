@@ -10,6 +10,15 @@ public class SdwnPacketFactory implements PacketFactory
     @Override
     public Packet create(List<Integer> packetContent)
     {
-        return null;
+        Packet packet = null;
+
+        switch (SdwnPacketHelper.getType(packetContent)) {
+            case REPORT:
+                packet = new SdwnReportPacket(packetContent);
+                break;
+
+        }
+
+        return packet;
     }
 }
