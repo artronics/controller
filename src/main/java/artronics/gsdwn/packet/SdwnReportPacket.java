@@ -2,7 +2,7 @@ package artronics.gsdwn.packet;
 
 import java.util.List;
 
-public class SdwnReportPacket extends BasePacket
+public class SdwnReportPacket extends SdwnBasePacket
 {
     public static final int NEIGHBOR_INDEX = 13;
     private int battery;

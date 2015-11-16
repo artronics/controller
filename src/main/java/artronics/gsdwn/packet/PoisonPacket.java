@@ -9,7 +9,7 @@ import java.util.List;
 public class PoisonPacket implements Packet
 {
     @Override
-    public Integer getSource()
+    public Integer getSrcShortAddress()
     {
         return null;
     }

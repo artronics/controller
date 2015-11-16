@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Packet
 {
-    Integer getSource();
+    Integer getSrcShortAddress();
 
     List<Integer> getContent();
 

@@ -34,7 +34,7 @@ public class StatisticsImpl implements Statistics
                 if (packet == POISON_PILL)
                     break;
 
-                int addr = packet.getSource();
+                int addr = packet.getSrcShortAddress();
                 PerNodeStatistics st = null;
 
                 if (!nodes.containsKey(addr)) {
