@@ -124,4 +124,19 @@ public class GraphDelegatorTest
         assertTrue(nodes.contains(node1));
         assertFalse(nodes.contains(node3));
     }
+
+    @Test
+    public void it_should_return_null_if_node_doesnt_exist()
+    {
+        assertNull(graphHelper.getNeighbors(new SdwnNode(3432)));
+    }
+
+    @Test
+    public void it_should_return_empty_set_if_node_has_no_neighbors()
+    {
+        SdwnNode node4 = new SdwnNode(4);
+        networkMap.addNode(node4);
+        Set<Node> nodes = graphHelper.getNeighbors(node4);
+        assertThat(nodes.size(), equalTo(0));
+    }
 }
