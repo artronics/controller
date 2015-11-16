@@ -5,10 +5,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GraphDelegator
 {
@@ -46,5 +43,25 @@ public class GraphDelegator
         nodesList.add(0, source);
 
         return nodesList;
+    }
+
+    Set<Node> getNeighbors(Node node)
+    {
+        if (!graph.containsVertex(node))
+            return null;
+
+        Set<Node> nodes = new HashSet<>();
+
+        Set<DefaultWeightedEdge> edges = graph.edgesOf(node);
+
+        for (DefaultWeightedEdge edge : edges) {
+            nodes.add(graph.getEdgeSource(edge));
+            nodes.add(graph.getEdgeTarget(edge));
+        }
+
+        //remove node from set. we just need its neighbors
+        nodes.remove(node);
+
+        return nodes;
     }
 }

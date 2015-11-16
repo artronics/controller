@@ -8,9 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class GraphDelegatorTest
 {
@@ -111,4 +112,16 @@ public class GraphDelegatorTest
         assertThat(targetNode1, equalTo(node0));
     }
 
+    @Test
+    public void it_should_return_a_set_of_neighbors_not_containing_itself()
+    {
+        Set<Node> nodes = graphHelper.getNeighbors(node2);
+
+        //should not contain itself
+        assertFalse(nodes.contains(node2));
+
+        assertTrue(nodes.contains(node0));
+        assertTrue(nodes.contains(node1));
+        assertFalse(nodes.contains(node3));
+    }
 }
