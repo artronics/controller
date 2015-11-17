@@ -17,6 +17,7 @@ public class SdwnBasePacket implements Packet
         this.content = content;
 
         this.srcShortAddress = SdwnPacketHelper.getSourceAddress(content);
+        this.dstShortAddress = SdwnPacketHelper.getDestinationAddress(content);
     }
 
     @Override
