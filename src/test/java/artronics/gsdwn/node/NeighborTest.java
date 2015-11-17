@@ -5,11 +5,12 @@ import artronics.gsdwn.packet.SdwnReportPacket;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class NeighborTest
 {
@@ -44,5 +45,29 @@ public class NeighborTest
         SdwnNode sameNode = new SdwnNode(35);
 
         assertEquals(sameNode, node);
+    }
+
+    @Test
+    public void it_should_be_equal_to_a_Node_just_if_addresses_are_the_same(){
+        SdwnNode node = new SdwnNode(1);
+        Neighbor neighbor = new Neighbor(1,23);
+
+        assertThat(node,equalTo(neighbor));
+    }
+
+    @Test
+    public void it_should_work_in_HashSet_contains_methods(){
+        //we add a node and a neighbor with same address
+        //HashSet must be contains one of them as soon as
+        //generic type is Node
+        SdwnNode node0= new SdwnNode(0);
+        Neighbor neighbor0 = new Neighbor(0,32);
+        Set<Node> set = new HashSet<>();
+        set.add(node0);
+        set.add(neighbor0);
+
+        assertThat(set.size(),equalTo(1));
+        assertTrue(set.contains(neighbor0));
+        assertTrue(set.contains(node0));
     }
 }

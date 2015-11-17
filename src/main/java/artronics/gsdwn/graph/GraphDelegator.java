@@ -45,7 +45,7 @@ public class GraphDelegator
         return nodesList;
     }
 
-    Set<Node> getNeighbors(Node node)
+    public Set<Node> getNeighbors(Node node)
     {
         if (!graph.containsVertex(node))
             return null;
@@ -63,5 +63,10 @@ public class GraphDelegator
         nodes.remove(node);
 
         return nodes;
+    }
+
+    public boolean isIsland(Node node)
+    {
+        return graph.edgesOf(node).isEmpty();
     }
 }

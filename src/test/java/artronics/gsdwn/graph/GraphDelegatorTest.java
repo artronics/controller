@@ -139,4 +139,14 @@ public class GraphDelegatorTest
         Set<Node> nodes = graphHelper.getNeighbors(node4);
         assertThat(nodes.size(), equalTo(0));
     }
+
+    @Test
+    public void test_isIsland()
+    {
+        SdwnNode node4 = new SdwnNode(4);
+        networkMap.addNode(node4);
+
+        assertTrue(graphHelper.isIsland(node4));
+        assertFalse(graphHelper.isIsland(node0));
+    }
 }

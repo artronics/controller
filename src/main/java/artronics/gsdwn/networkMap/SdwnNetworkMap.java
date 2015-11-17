@@ -27,6 +27,12 @@ public class SdwnNetworkMap implements NetworkMap
     }
 
     @Override
+    public void removeLink(Node srcNode, Node neighbor)
+    {
+        graph.removeEdge(srcNode, neighbor);
+    }
+
+    @Override
     public void addLink(Node source, Node target, double weight)
     {
         DefaultWeightedEdge edge = graph.addEdge(source, target);

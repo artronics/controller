@@ -34,7 +34,7 @@ public class StatisticsImplTest
     @Test
     public void test_recording_battery_info_carried_with_report_Packet() throws InterruptedException
     {
-        int batt = statistics.forNode(0).getBattery();
+        int batt = statistics.forNode(30).getBattery();
         statistics.stop();
 
         assertEquals(255, batt);

@@ -21,4 +21,6 @@ public interface NetworkMap
     List<Node> getAllNodes();
 
     Graph<Node, DefaultWeightedEdge> getNetworkGraph();
+
+    void removeLink(Node srcNode, Node neighbor);
 }

@@ -89,6 +89,17 @@ public class SdwnNetworkMapTest
     }
 
     @Test
+    public void test_remove_link(){
+        networkMap.removeLink(node1,node2);
+        assertFalse(networkMap.hasLink(node1,node2));
+    }
+    @Test
+    public void test_remove_link_in_reverse(){
+        networkMap.removeLink(node2,node1);
+        assertFalse(networkMap.hasLink(node1,node2));
+    }
+
+    @Test
     public void Two_nodes_with_same_address_are_equal()
     {
         Node eqNode0 = new SdwnNode(0);
