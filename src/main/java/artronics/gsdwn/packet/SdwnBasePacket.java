@@ -1,5 +1,7 @@
 package artronics.gsdwn.packet;
 
+import artronics.gsdwn.log.Log;
+
 import java.util.List;
 
 public class SdwnBasePacket implements Packet
@@ -18,6 +20,8 @@ public class SdwnBasePacket implements Packet
 
         this.srcShortAddress = SdwnPacketHelper.getSourceAddress(content);
         this.dstShortAddress = SdwnPacketHelper.getDestinationAddress(content);
+
+        Log.PACKET.debug(toString());
     }
 
     @Override
@@ -41,5 +45,26 @@ public class SdwnBasePacket implements Packet
     public Integer getDstShortAddress()
     {
         return dstShortAddress;
+    }
+
+    @Override
+    public String toString()
+    {
+        String s = "";
+        s += String.format("%-13s", getType().toString());
+        s += printContent(getContent());
+
+        return s;
+    }
+
+    private String printContent(List<Integer> content)
+    {
+        String s = "";
+        for (Integer i : content) {
+            s += i.toString();
+            s += " ,";
+        }
+
+        return s;
     }
 }

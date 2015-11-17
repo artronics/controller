@@ -80,6 +80,30 @@ public class SdwnController implements Controller
         }
     };
 
+    /*
+        Sdwn Controller has nothing to do with received packets
+        that it takes from outside (cntTxPackets). It just gets the
+        content of packet and pass it to chapar.
+     */
+    private final Runnable cntTxListener = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            while (true){
+                try {
+                    Packet packet = cntTxPackets.take();
+
+                    List<Integer> msg = packet.getContent();
+                    chpTxMsg.add(msg);
+
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
     public SdwnController()
     {
         chpRxMsg = chapar.getRxMessages();
@@ -93,11 +117,13 @@ public class SdwnController implements Controller
 
         Thread msgBrThr = new Thread(msgBroker,"MsgBroker");
         Thread pckBrThr = new Thread(packetBroker,"PckBroker");
+        Thread pckLstThr = new Thread(cntTxListener,"CntTxListener");
         Thread mapUpThr = new Thread(mapUpdater, "MapUpdater");
         Thread stThr = new Thread(statistics, "Statistics");
 
         msgBrThr.start();
         pckBrThr.start();
+        pckLstThr.start();
         mapUpThr.start();
         stThr.start();
     }

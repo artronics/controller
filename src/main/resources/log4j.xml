@@ -27,6 +27,11 @@
         <appender-ref ref="console"></appender-ref>
     </logger>
 
+    <logger name="packet" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="console"></appender-ref>
+    </logger>
+
     <logger name="file">
         <level value="debug"/>
         <appender-ref ref="file"></appender-ref>

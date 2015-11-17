@@ -37,17 +37,19 @@ public class SdwnPacketHeader
                 DF_TYPE,
                 DF_TTL,
 
-                getHighAddress(DF_TTL),
-                getLowAddress(DF_TTL),
+                getHighAddress(DF_NXT_HOP),
+                getLowAddress(DF_NXT_HOP),
         };
         return Arrays.asList(header);
     }
 
-    public static List<Integer> create(int len, int src, int dst)
+    public static List<Integer> create(int len, SdwnPacketType type, int src, int dst)
     {
         List<Integer> header = createDefaultHeader();
 
         header.set(LENGTH.getValue(), len);
+
+        header.set(TYPE.getValue(), type.getValue());
 
         header.set(SOURCE_H.getValue(), getHighAddress(src));
         header.set(SOURCE_L.getValue(), getLowAddress(src));
