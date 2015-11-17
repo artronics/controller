@@ -52,7 +52,6 @@ public class NetworkMapUpdater implements Runnable
     {
         switch (packet.getType()) {
             case REPORT:
-                System.out.println(Thread.currentThread().getName() + " update map");
                 processReportPacket((SdwnReportPacket) packet);
                 break;
         }

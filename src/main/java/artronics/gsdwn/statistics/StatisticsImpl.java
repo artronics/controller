@@ -63,6 +63,7 @@ public class StatisticsImpl implements Statistics
         switch (packet.getType()) {
             case REPORT:
                 evaluateReportPacket((SdwnReportPacket) packet, st);
+                break;
         }
     }
 
@@ -70,7 +71,6 @@ public class StatisticsImpl implements Statistics
     {
         SdwnReportPacket rPacket = packet;
         st.battery = rPacket.getBattery();
-        System.out.println(Thread.currentThread().getName() + "bat " + st.battery);
     }
 
     class PerNodeStatistics
