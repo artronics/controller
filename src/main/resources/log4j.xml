@@ -22,7 +22,7 @@
     </appender>
 
 
-    <logger name="main">
+    <logger name="sdwn" additivity="false">
         <level value="debug"/>
         <appender-ref ref="console"></appender-ref>
     </logger>
@@ -36,6 +36,7 @@
     <root>
         <priority value="debug"/>
         <appender-ref ref="console"/>
+
     </root>
 
 
