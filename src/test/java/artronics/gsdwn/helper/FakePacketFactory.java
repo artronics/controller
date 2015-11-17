@@ -11,7 +11,7 @@ import java.util.Random;
 
 /**
  * It creates a fake SdwnPacket of all types The default convention for non-parameter methods is as
- * follow: src is always 0, dst is always 30, payload for data is from 0 to payload length and for
+ * follow: src is always 30, dst is always 0, payload for data is from 0 to payload length and for
  * default length is 10,
  */
 public class FakePacketFactory
@@ -21,7 +21,7 @@ public class FakePacketFactory
 
     private List<Integer> createHeader()
     {
-        return createHeader(10, SdwnPacketType.DATA, 0, 30);
+        return createHeader(10, SdwnPacketType.DATA, 30, 0);
     }
 
     private List<Integer> createHeader(int len, SdwnPacketType type, int src, int dst)
@@ -67,7 +67,7 @@ public class FakePacketFactory
     {
         List<Integer> neighbors = createNeighbors(35, 36, 37);
 
-        return createReportPacket(0, 30, 1, 255, neighbors);
+        return createReportPacket(30, 0, 1, 255, neighbors);
     }
 
     public List<Integer> createNeighbors(int... addrs)
@@ -99,7 +99,7 @@ public class FakePacketFactory
 
     public List<Integer> createDataPacket()
     {
-        return createDataPacket(0, 30, 10);
+        return createDataPacket(30, 0, 10);
     }
 
 }
