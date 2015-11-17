@@ -177,4 +177,28 @@ public class NetworkMapUpdaterTest
 
         assertMapEqual(expMap, networkMap);
     }
+
+    /*
+        It is not possible for the network to have unconnected graph
+        however, at the beginning of network formation it's likely to
+        receive packets from different parts of the network.
+     */
+    @Test
+    public void it_should_create_a_not_connected_graph() throws InterruptedException
+    {
+        Packet packet = createRepPacket();
+        Packet packet2 = createRepPacket(40, 0, factory.createNeighbors(41));
+        queue.add(packet);
+        queue.add(packet2);
+        updater.start();
+        Thread.sleep(300);
+
+        NetworkMap expMap = getDefaultNetworkMap();
+        SdwnNode node41 = new SdwnNode(41);
+        expMap.addNode(node40);
+        expMap.addNode(node41);
+        expMap.addLink(node40, node41, 65);
+
+        assertMapEqual(expMap, networkMap);
+    }
 }
