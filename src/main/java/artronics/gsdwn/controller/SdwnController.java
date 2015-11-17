@@ -2,9 +2,7 @@ package artronics.gsdwn.controller;
 
 import artronics.chaparMini.Chapar;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
-import artronics.gsdwn.networkMap.NetworkMap;
-import artronics.gsdwn.networkMap.NetworkMapUpdater;
-import artronics.gsdwn.networkMap.SdwnNetworkMap;
+import artronics.gsdwn.networkMap.*;
 import artronics.gsdwn.packet.*;
 import artronics.gsdwn.statistics.Statistics;
 import artronics.gsdwn.statistics.StatisticsImpl;
@@ -30,11 +28,13 @@ public class SdwnController implements Controller
 
     //For NetworkMapUpdater
     private final BlockingQueue<Packet> mapPackets = new LinkedBlockingQueue<>();
+    private final WeightCalculator weightCalculator = new RssiSimpleWeightCalculator();
 
     private final PacketFactory packetFactory = new SdwnPacketFactory();
 
     private final NetworkMap networkMap = new SdwnNetworkMap();
-    private final NetworkMapUpdater mapUpdater = new NetworkMapUpdater(mapPackets, networkMap);
+    private final NetworkMapUpdater mapUpdater =
+            new NetworkMapUpdater(mapPackets, networkMap, weightCalculator);
     private final Statistics statistics = new StatisticsImpl(stcPackets);
 
     private final Runnable packetBroker = new Runnable()

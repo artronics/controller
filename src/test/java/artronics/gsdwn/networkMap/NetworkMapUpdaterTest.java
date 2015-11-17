@@ -19,7 +19,8 @@ public class NetworkMapUpdaterTest
 {
     NetworkMap networkMap = new SdwnNetworkMap();
     BlockingQueue<Packet> queue = new LinkedBlockingQueue<>();
-    NetworkMapUpdater mapUpdater = new NetworkMapUpdater(queue, networkMap);
+    WeightCalculator weightCalculator = new RssiSimpleWeightCalculator();
+    NetworkMapUpdater mapUpdater = new NetworkMapUpdater(queue, networkMap, weightCalculator);
     Thread updater = new Thread(mapUpdater);
 
     FakePacketFactory factory = new FakePacketFactory();

@@ -20,11 +20,15 @@ public class NetworkMapUpdater implements Runnable
 
     private final BlockingQueue<Packet> queue;
     private final NetworkMap networkMap;
+    private final WeightCalculator weightCalculator;
 
-    public NetworkMapUpdater(BlockingQueue<Packet> queue, NetworkMap networkMap)
+    public NetworkMapUpdater(BlockingQueue<Packet> queue,
+                             NetworkMap networkMap,
+                             WeightCalculator weightCalculator)
     {
         this.queue = queue;
         this.networkMap = networkMap;
+        this.weightCalculator = weightCalculator;
         this.graphDelegator = new GraphDelegator(networkMap.getNetworkGraph());
     }
 
@@ -94,12 +98,8 @@ public class NetworkMapUpdater implements Runnable
 
     private void connect(Node node, Neighbor neighbor)
     {
-        networkMap.addLink(node, neighbor, getWeight(node, neighbor));
-    }
-
-    private double getWeight(Node node, Neighbor neighbor)
-    {
-        return (256 - neighbor.getRssi());
+        networkMap.addLink(node, neighbor,
+                           weightCalculator.getWeight(node, neighbor));
     }
 
     public void stop()
