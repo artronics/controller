@@ -3,6 +3,8 @@ package artronics.gsdwn.controller;
 import artronics.chaparMini.Chapar;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.networkMap.*;
+import artronics.gsdwn.node.Node;
+import artronics.gsdwn.node.SdwnNode;
 import artronics.gsdwn.packet.*;
 import artronics.gsdwn.statistics.Statistics;
 import artronics.gsdwn.statistics.StatisticsImpl;
@@ -33,8 +35,12 @@ public class SdwnController implements Controller
     private final PacketFactory packetFactory = new SdwnPacketFactory();
 
     private final NetworkMap networkMap = new SdwnNetworkMap();
+
+    private final ShortestPathFinder pathFinder = new SdwnShortestPathFinder(networkMap);
+
     private final NetworkMapUpdater mapUpdater =
             new NetworkMapUpdater(mapPackets, networkMap, weightCalculator);
+
     private final Statistics statistics = new StatisticsImpl(stcPackets);
 
     private final Runnable packetBroker = new Runnable()
@@ -136,11 +142,22 @@ public class SdwnController implements Controller
         switch (packet.getType()) {
             case REPORT:
                 SdwnReportPacket rPacket = (SdwnReportPacket) packet;
-
                 processReportPacket(rPacket);
-
+                break;
+            case RULE_REQUEST:
+                SdwnRuleRequestPacket rq = (SdwnRuleRequestPacket) packet;
+                processRuleRequestPacket(rq);
                 break;
         }
+
+    }
+
+    private void processRuleRequestPacket(SdwnRuleRequestPacket rq)
+    {
+        SdwnNode srcNode = new SdwnNode(rq.getSrcShortAddress());
+        SdwnNode dstNode = new SdwnNode(rq.getDstShortAddress());
+
+        List<Node> nodes = pathFinder.getShortestPath(srcNode, dstNode);
 
     }
 
