@@ -1,5 +1,7 @@
 package artronics.gsdwn.controller;
 
+import artronics.chaparMini.Chapar;
+import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.networkMap.NetworkMap;
 import artronics.gsdwn.networkMap.NetworkMapUpdater;
 import artronics.gsdwn.networkMap.SdwnNetworkMap;
@@ -7,6 +9,7 @@ import artronics.gsdwn.packet.*;
 import artronics.gsdwn.statistics.Statistics;
 import artronics.gsdwn.statistics.StatisticsImpl;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,8 +17,13 @@ public class SdwnController implements Controller
 {
     private final static Packet POISON_PILL = new PoisonPacket();
 
-    private final BlockingQueue<Packet> cntRxPackets;
-    private final BlockingQueue<Packet> cntTxPackets;
+    private final Chapar chapar = new Chapar();
+
+    private final BlockingQueue<List<Integer>> chpRxMsg;
+    private final BlockingQueue<List<Integer>> chpTxMsg;
+
+    private final BlockingQueue<Packet> cntRxPackets = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Packet> cntTxPackets = new LinkedBlockingQueue<>();
 
     //For Statistics
     private final BlockingQueue<Packet> stcPackets = new LinkedBlockingQueue<>();
@@ -28,43 +36,72 @@ public class SdwnController implements Controller
     private final NetworkMap networkMap = new SdwnNetworkMap();
     private final NetworkMapUpdater mapUpdater = new NetworkMapUpdater(mapPackets, networkMap);
     private final Statistics statistics = new StatisticsImpl(stcPackets);
-    public String kir;
-    private volatile boolean isStarted = false;
 
-    public SdwnController(
-            BlockingQueue<Packet> cntRxPackets,
-            BlockingQueue<Packet> cntTxPackets)
+    private final Runnable packetBroker = new Runnable()
     {
-        this.cntRxPackets = cntRxPackets;
-        this.cntTxPackets = cntTxPackets;
+        @Override
+        public void run()
+        {
+            while (true) {
+                try {
+                    Packet packet = cntRxPackets.take();
+                    if (packet == POISON_PILL)
+                        break;
 
+                    mapPackets.add(packet);
+                    stcPackets.add(packet);
+
+                    processPacket(packet);
+
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    private final Runnable msgBroker = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            while (true){
+                try {
+                    List<Integer> msg = chpRxMsg.take();
+
+                    Packet packet = packetFactory.create(msg);
+                    cntRxPackets.add(packet);
+
+
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    public SdwnController()
+    {
+        chpRxMsg = chapar.getRxMessages();
+        chpTxMsg = chapar.getTxMessages();
+    }
+
+    public void start() throws ChaparConnectionException
+    {
+        chapar.connect();
+        chapar.start();
+
+        Thread msgBrThr = new Thread(msgBroker,"MsgBroker");
+        Thread pckBrThr = new Thread(packetBroker,"PckBroker");
         Thread mapUpThr = new Thread(mapUpdater, "MapUpdater");
         Thread stThr = new Thread(statistics, "Statistics");
+
+        msgBrThr.start();
+        pckBrThr.start();
         mapUpThr.start();
         stThr.start();
     }
 
-    @Override
-    public void run()
-    {
-        while (true) {
-            try {
-                kir = "foo";
-                Packet packet = cntRxPackets.take();
-                if (packet == POISON_PILL)
-                    break;
-
-                mapPackets.add(packet);
-                stcPackets.add(packet);
-
-                processPacket(packet);
-
-            }catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
     @Override
     public void processPacket(Packet packet)
@@ -84,5 +121,23 @@ public class SdwnController implements Controller
     private void processReportPacket(SdwnReportPacket packet)
     {
 
+    }
+
+    public void stop()
+    {
+        chapar.stop();
+        cntRxPackets.add(POISON_PILL);
+        statistics.stop();
+        mapUpdater.stop();
+    }
+
+    public BlockingQueue<Packet> getCntRxPackets()
+    {
+        return cntRxPackets;
+    }
+
+    public BlockingQueue<Packet> getCntTxPackets()
+    {
+        return cntTxPackets;
     }
 }
