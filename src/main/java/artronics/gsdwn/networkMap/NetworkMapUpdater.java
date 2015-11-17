@@ -98,8 +98,8 @@ public class NetworkMapUpdater implements Runnable
 
     private void connect(Node node, Neighbor neighbor)
     {
-        networkMap.addLink(node, neighbor,
-                           weightCalculator.getWeight(node, neighbor));
+        double weight = weightCalculator.getWeight(node, neighbor);
+        networkMap.addLink(node, neighbor, weight);
     }
 
     public void stop()
