@@ -7,6 +7,10 @@ import artronics.gsdwn.packet.PacketFactory;
 import artronics.gsdwn.packet.SdwnPacketFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -15,16 +19,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NetworkMapUpdaterTest
 {
     NetworkMap networkMap = new SdwnNetworkMap();
     BlockingQueue<Packet> queue = new LinkedBlockingQueue<>();
+
+    @InjectMocks
     WeightCalculator weightCalculator = new RssiSimpleWeightCalculator();
-    NetworkMapUpdater mapUpdater = new NetworkMapUpdater(queue, networkMap, weightCalculator);
-    Thread updater = new Thread(mapUpdater);
 
     FakePacketFactory factory = new FakePacketFactory();
+
     PacketFactory packetFactory = new SdwnPacketFactory();
+    //        mapUpdater = new NetworkMapUpdater(queue, networkMap, weightCalculator);
+    NetworkMapUpdater mapUpdater = new NetworkMapUpdater(queue, networkMap, weightCalculator);
+
+    //    NetworkMapUpdater mapUpdater;
+    Thread updater = new Thread(mapUpdater);
 
     SdwnNode node0 = new SdwnNode(0);
     SdwnNode node30 = new SdwnNode(30);
@@ -37,41 +48,7 @@ public class NetworkMapUpdaterTest
     @Before
     public void setUp() throws Exception
     {
-    }
-
-    private void assertMapEqual(NetworkMap exp, NetworkMap act)
-    {
-        assertEquals(exp.getNetworkGraph().vertexSet(), act.getNetworkGraph().vertexSet());
-        //I use toString because actual equal override is considered as weighted
-        //however here i do not consider weigh of each link
-        //For this to work you should construct your link exactly in order
-        assertEquals(exp.getNetworkGraph().edgeSet().toString(),
-                     act.getNetworkGraph().edgeSet().toString());
-    }
-
-    //this returns a netMap correspond to default ReportPacket
-    //which FakePacketFactory produces
-    private NetworkMap getDefaultNetworkMap()
-    {
-        NetworkMap expMap = new SdwnNetworkMap();
-        expMap.addNode(node30);
-        expMap.addNode(node35);
-        expMap.addNode(node36);
-        expMap.addNode(node37);
-        expMap.addLink(node30, node35, 45);
-        expMap.addLink(node30, node36, 45);
-        expMap.addLink(node30, node37, 45);
-        return expMap;
-    }
-
-    private Packet createRepPacket()
-    {
-        return packetFactory.create(factory.createReportPacket());
-    }
-
-    private Packet createRepPacket(int src, int dst, List<Integer> neighbors)
-    {
-        return packetFactory.create(factory.createReportPacket(src, dst, 1, 255, neighbors));
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -202,4 +179,40 @@ public class NetworkMapUpdaterTest
 
         assertMapEqual(expMap, networkMap);
     }
+
+    private void assertMapEqual(NetworkMap exp, NetworkMap act)
+    {
+        assertEquals(exp.getNetworkGraph().vertexSet(), act.getNetworkGraph().vertexSet());
+        //I use toString because actual equal override is considered as weighted
+        //however here i do not consider weigh of each link
+        //For this to work you should construct your link exactly in order
+        assertEquals(exp.getNetworkGraph().edgeSet().toString(),
+                     act.getNetworkGraph().edgeSet().toString());
+    }
+
+    //this returns a netMap correspond to default ReportPacket
+    //which FakePacketFactory produces
+    private NetworkMap getDefaultNetworkMap()
+    {
+        NetworkMap expMap = new SdwnNetworkMap();
+        expMap.addNode(node30);
+        expMap.addNode(node35);
+        expMap.addNode(node36);
+        expMap.addNode(node37);
+        expMap.addLink(node30, node35, 45);
+        expMap.addLink(node30, node36, 45);
+        expMap.addLink(node30, node37, 45);
+        return expMap;
+    }
+
+    private Packet createRepPacket()
+    {
+        return packetFactory.create(factory.createReportPacket());
+    }
+
+    private Packet createRepPacket(int src, int dst, List<Integer> neighbors)
+    {
+        return packetFactory.create(factory.createReportPacket(src, dst, 1, 255, neighbors));
+    }
+
 }
