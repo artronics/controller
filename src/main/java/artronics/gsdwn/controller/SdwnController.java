@@ -157,7 +157,14 @@ public class SdwnController implements Controller
         SdwnNode srcNode = new SdwnNode(rq.getSrcShortAddress());
         SdwnNode dstNode = new SdwnNode(rq.getDstShortAddress());
 
-        List<Node> nodes = pathFinder.getShortestPath(srcNode, dstNode);
+//        List<Node> nodes = pathFinder.getShortestPath(srcNode, dstNode);
+        List<Node> nodes = pathFinder.getShortestPath(dstNode, srcNode);
+        nodes.add(0,srcNode);
+        nodes.add(dstNode);
+
+        Packet packet= SdwnOpenPathPacket.create(nodes);
+
+        cntTxPackets.add(packet);
 
     }
 
