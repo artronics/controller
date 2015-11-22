@@ -1,5 +1,6 @@
 package artronics.gsdwn;
 
+import artronics.chaparMini.Chapar;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.controller.SdwnController;
 import artronics.gsdwn.packet.Packet;
@@ -12,7 +13,7 @@ public class SdwnMain
     public static void main(String[] args) throws InterruptedException
     {
 
-        SdwnController controller = new SdwnController();
+        SdwnController controller = new SdwnController(new Chapar());
 
         try {
 

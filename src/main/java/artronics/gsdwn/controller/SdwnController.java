@@ -1,6 +1,6 @@
 package artronics.gsdwn.controller;
 
-import artronics.chaparMini.Chapar;
+import artronics.chaparMini.DeviceConnection;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.networkMap.*;
 import artronics.gsdwn.node.Node;
@@ -17,7 +17,7 @@ public class SdwnController implements Controller
 {
     private final static Packet POISON_PILL = new PoisonPacket();
 
-    private final Chapar chapar = new Chapar();
+    private final DeviceConnection deviceConnection;
 
     private final BlockingQueue<List<Integer>> chpRxMsg;
     private final BlockingQueue<List<Integer>> chpTxMsg;
@@ -89,7 +89,7 @@ public class SdwnController implements Controller
     /*
         Sdwn Controller has nothing to do with received packets
         that it takes from outside (cntTxPackets). It just gets the
-        content of packet and pass it to chapar.
+        content of packet and pass it to deviceConnection.
      */
     private final Runnable cntTxListener = new Runnable()
     {
@@ -110,16 +110,18 @@ public class SdwnController implements Controller
         }
     };
 
-    public SdwnController()
+    public SdwnController(DeviceConnection deviceConnection)
     {
-        chpRxMsg = chapar.getRxMessages();
-        chpTxMsg = chapar.getTxMessages();
+        this.deviceConnection = deviceConnection;
+        chpRxMsg = this.deviceConnection.getRxQueue();
+        chpTxMsg = this.deviceConnection.getTxQueue();
     }
 
+    @Override
     public void start() throws ChaparConnectionException
     {
-        chapar.connect();
-        chapar.start();
+        deviceConnection.connect();
+        deviceConnection.start();
 
         Thread msgBrThr = new Thread(msgBroker,"MsgBroker");
         Thread pckBrThr = new Thread(packetBroker,"PckBroker");
@@ -173,9 +175,10 @@ public class SdwnController implements Controller
 
     }
 
+    @Override
     public void stop()
     {
-        chapar.stop();
+        deviceConnection.stop();
         cntRxPackets.add(POISON_PILL);
         statistics.stop();
         mapUpdater.stop();
