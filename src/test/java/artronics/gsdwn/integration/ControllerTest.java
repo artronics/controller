@@ -5,9 +5,6 @@ import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.controller.Controller;
 import artronics.gsdwn.controller.SdwnController;
 import artronics.gsdwn.helper.FakePacketFactory;
-import artronics.gsdwn.packet.Packet;
-import artronics.gsdwn.packet.PacketFactory;
-import artronics.gsdwn.packet.SdwnPacketFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,14 +19,13 @@ public class ControllerTest
     Controller controller = new SdwnController(fakeDevCon);
 
     FakePacketFactory factory = new FakePacketFactory();
-    PacketFactory packetFactory = new SdwnPacketFactory();
 
     @Before
     public void setUp() throws Exception
     {
         controller.start();
 
-        controller.processPacket(createRepPacket());
+        controller.processPacket(factory.createReportPacket());
     }
 
 
@@ -39,18 +35,6 @@ public class ControllerTest
 
 
     }
-
-    //Todo duplicated code in NetworkMapUpdaterTest: move to FakePacketFactory
-    private Packet createRepPacket()
-    {
-        return packetFactory.create(factory.createRawReportPacket());
-    }
-
-    private Packet createRepPacket(int src, int dst, List<Integer> neighbors)
-    {
-        return packetFactory.create(factory.createRawReportPacket(src, dst, 1, 255, neighbors));
-    }
-
 
 }
 

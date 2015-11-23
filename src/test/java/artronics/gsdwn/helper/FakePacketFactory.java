@@ -1,8 +1,6 @@
 package artronics.gsdwn.helper;
 
-import artronics.gsdwn.packet.SdwnPacket;
-import artronics.gsdwn.packet.SdwnPacketHelper;
-import artronics.gsdwn.packet.SdwnPacketType;
+import artronics.gsdwn.packet.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +14,7 @@ import java.util.Random;
  */
 public class FakePacketFactory
 {
+    PacketFactory packetFactory = new SdwnPacketFactory();
     List<Integer> packet = new ArrayList<>();
     List<Integer> header = new ArrayList<>();
 
@@ -42,6 +41,21 @@ public class FakePacketFactory
         header = Arrays.asList(bytes);
 
         return header;
+    }
+
+    public Packet createReportPacket()
+    {
+        return packetFactory.create(createRawReportPacket());
+    }
+
+    public Packet createReportPacket(int src, int dst, int dis, int bat, List<Integer> neighbors)
+    {
+        return packetFactory.create(createRawReportPacket(src, dst, dis, bat, neighbors));
+    }
+
+    public Packet createReportPacket(int src, int dst, List<Integer> neighbors)
+    {
+        return createReportPacket(src, dst, 1, 255, neighbors);
     }
 
     public List<Integer> createRawReportPacket(int src, int dst, int dis, int bat,

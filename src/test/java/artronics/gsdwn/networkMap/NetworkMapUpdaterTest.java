@@ -5,13 +5,10 @@ import artronics.gsdwn.node.Neighbor;
 import artronics.gsdwn.node.Node;
 import artronics.gsdwn.node.SdwnNode;
 import artronics.gsdwn.packet.Packet;
-import artronics.gsdwn.packet.PacketFactory;
-import artronics.gsdwn.packet.SdwnPacketFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,7 +25,6 @@ public class NetworkMapUpdaterTest
 
     FakePacketFactory factory = new FakePacketFactory();
 
-    PacketFactory packetFactory = new SdwnPacketFactory();
     //        mapUpdater = new NetworkMapUpdater(queue, networkMap, weightCalculator);
     NetworkMapUpdater mapUpdater = new NetworkMapUpdater(queue, networkMap, weightCalculator);
 
@@ -52,7 +48,7 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_create_a_graph_with_report_packet() throws InterruptedException
     {
-        Packet packet = packetFactory.create(factory.createRawReportPacket());
+        Packet packet = factory.createReportPacket();
         queue.add(packet);
         updater.start();
         Thread.sleep(200);
@@ -73,8 +69,8 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_add_nodes_to_current_graph() throws InterruptedException
     {
-        Packet packet = createRepPacket();
-        Packet packet2 = createRepPacket(35, 0, factory.createNeighbors(30, 36));
+        Packet packet = factory.createReportPacket();
+        Packet packet2 = factory.createReportPacket(35, 0, factory.createNeighbors(30, 36));
 
         queue.add(packet);
         queue.add(packet2);
@@ -93,8 +89,8 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_add_new_nodes_with_report() throws InterruptedException
     {
-        Packet packet = createRepPacket();
-        Packet packet2 = createRepPacket(37, 0, factory.createNeighbors(30, 40));
+        Packet packet = factory.createReportPacket();
+        Packet packet2 = factory.createReportPacket(37, 0, factory.createNeighbors(30, 40));
 
         queue.add(packet);
         queue.add(packet2);
@@ -115,12 +111,12 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_remove_links_and_not_nodes() throws InterruptedException
     {
-        Packet packet = createRepPacket();
-        Packet packet2 = createRepPacket(35, 0, factory.createNeighbors(30, 36));
-        Packet packet3 = createRepPacket(37, 0, factory.createNeighbors(30, 40));
+        Packet packet = factory.createReportPacket();
+        Packet packet2 = factory.createReportPacket(35, 0, factory.createNeighbors(30, 36));
+        Packet packet3 = factory.createReportPacket(37, 0, factory.createNeighbors(30, 40));
 
         //Now 35 drops its link from 36 and create a link with 37 and 40
-        Packet packet4 = createRepPacket(35, 0, factory.createNeighbors(30, 37, 40));
+        Packet packet4 = factory.createReportPacket(35, 0, factory.createNeighbors(30, 37, 40));
 
 
         queue.add(packet);
@@ -141,8 +137,8 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_detect_island_node_and_remove_it() throws InterruptedException
     {
-        Packet packet = createRepPacket();
-        Packet packet2 = createRepPacket(30, 0, factory.createNeighbors(35, 36));
+        Packet packet = factory.createReportPacket();
+        Packet packet2 = factory.createReportPacket(30, 0, factory.createNeighbors(35, 36));
         queue.add(packet);
         queue.add(packet2);
         updater.start();
@@ -162,8 +158,8 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_create_a_not_connected_graph() throws InterruptedException
     {
-        Packet packet = createRepPacket();
-        Packet packet2 = createRepPacket(40, 0, factory.createNeighbors(41));
+        Packet packet = factory.createReportPacket();
+        Packet packet2 = factory.createReportPacket(40, 0, factory.createNeighbors(41));
         queue.add(packet);
         queue.add(packet2);
         updater.start();
@@ -201,16 +197,6 @@ public class NetworkMapUpdaterTest
         expMap.addLink(node30, node36, 45);
         expMap.addLink(node30, node37, 45);
         return expMap;
-    }
-
-    private Packet createRepPacket()
-    {
-        return packetFactory.create(factory.createRawReportPacket());
-    }
-
-    private Packet createRepPacket(int src, int dst, List<Integer> neighbors)
-    {
-        return packetFactory.create(factory.createRawReportPacket(src, dst, 1, 255, neighbors));
     }
 
 }
