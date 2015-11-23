@@ -52,7 +52,7 @@ public class NetworkMapUpdaterTest
     @Test
     public void it_should_create_a_graph_with_report_packet() throws InterruptedException
     {
-        Packet packet = packetFactory.create(factory.createReportPacket());
+        Packet packet = packetFactory.create(factory.createRawReportPacket());
         queue.add(packet);
         updater.start();
         Thread.sleep(200);
@@ -205,12 +205,12 @@ public class NetworkMapUpdaterTest
 
     private Packet createRepPacket()
     {
-        return packetFactory.create(factory.createReportPacket());
+        return packetFactory.create(factory.createRawReportPacket());
     }
 
     private Packet createRepPacket(int src, int dst, List<Integer> neighbors)
     {
-        return packetFactory.create(factory.createReportPacket(src, dst, 1, 255, neighbors));
+        return packetFactory.create(factory.createRawReportPacket(src, dst, 1, 255, neighbors));
     }
 
 }

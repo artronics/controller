@@ -18,7 +18,7 @@ public class SdwnPacketHelperTest
     @Before
     public void setUp()
     {
-        goodPacket = factory.createDataPacket();
+        goodPacket = factory.createRawDataPacket();
     }
 
     @Test
@@ -45,7 +45,7 @@ public class SdwnPacketHelperTest
 
         //another time for Rule request
         goodPacket.clear();
-        goodPacket = factory.createReportPacket();
+        goodPacket = factory.createRawReportPacket();
         actType = SdwnPacketHelper.getType(goodPacket);
 
         assertEquals(SdwnPacketType.REPORT, actType);

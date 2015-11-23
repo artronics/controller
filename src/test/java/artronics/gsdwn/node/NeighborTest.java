@@ -23,7 +23,7 @@ public class NeighborTest
     @Before
     public void setUp() throws Exception
     {
-        packetBytes = factory.createReportPacket();
+        packetBytes = factory.createRawReportPacket();
         packet = new SdwnReportPacket(packetBytes);
         neighbors = Neighbor.createNeighbors(packet);
     }

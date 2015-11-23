@@ -44,8 +44,8 @@ public class FakePacketFactory
         return header;
     }
 
-    public List<Integer> createReportPacket(int src, int dst, int dis, int bat,
-                                            List<Integer> neighbors)
+    public List<Integer> createRawReportPacket(int src, int dst, int dis, int bat,
+                                               List<Integer> neighbors)
     {
         List<Integer> header = createHeader(SdwnPacket.HEADER_INDEX + 3 + neighbors.size(),
                                             SdwnPacketType.REPORT,
@@ -63,11 +63,11 @@ public class FakePacketFactory
         return packet;
     }
 
-    public List<Integer> createReportPacket()
+    public List<Integer> createRawReportPacket()
     {
         List<Integer> neighbors = createNeighbors(35, 36, 37);
 
-        return createReportPacket(30, 0, 1, 255, neighbors);
+        return createRawReportPacket(30, 0, 1, 255, neighbors);
     }
 
     public List<Integer> createNeighbors(int... addrs)
@@ -84,7 +84,7 @@ public class FakePacketFactory
         return neighbors;
     }
 
-    public List<Integer> createDataPacket(int src, int dst, int payloadLen)
+    public List<Integer> createRawDataPacket(int src, int dst, int payloadLen)
     {
         List<Integer> header = createHeader(SdwnPacket.HEADER_INDEX + payloadLen,
                                             SdwnPacketType.DATA, src, dst);
@@ -97,9 +97,9 @@ public class FakePacketFactory
         return packet;
     }
 
-    public List<Integer> createDataPacket()
+    public List<Integer> createRawDataPacket()
     {
-        return createDataPacket(30, 0, 10);
+        return createRawDataPacket(30, 0, 10);
     }
 
 }

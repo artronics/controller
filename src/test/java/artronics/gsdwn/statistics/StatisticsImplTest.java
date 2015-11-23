@@ -21,7 +21,7 @@ public class StatisticsImplTest
     @Before
     public void setUp() throws Exception
     {
-        SdwnReportPacket packet = new SdwnReportPacket(factory.createReportPacket());
+        SdwnReportPacket packet = new SdwnReportPacket(factory.createRawReportPacket());
         queue.add(packet);
         statistics = new StatisticsImpl(queue);
         Thread stcThr = new Thread(statistics);

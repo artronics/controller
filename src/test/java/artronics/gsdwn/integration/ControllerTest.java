@@ -43,12 +43,12 @@ public class ControllerTest
     //Todo duplicated code in NetworkMapUpdaterTest: move to FakePacketFactory
     private Packet createRepPacket()
     {
-        return packetFactory.create(factory.createReportPacket());
+        return packetFactory.create(factory.createRawReportPacket());
     }
 
     private Packet createRepPacket(int src, int dst, List<Integer> neighbors)
     {
-        return packetFactory.create(factory.createReportPacket(src, dst, 1, 255, neighbors));
+        return packetFactory.create(factory.createRawReportPacket(src, dst, 1, 255, neighbors));
     }
 
 
