@@ -1,16 +1,15 @@
 package artronics.gsdwn.networkMap;
 
 import artronics.gsdwn.helper.FakePacketFactory;
+import artronics.gsdwn.node.Neighbor;
+import artronics.gsdwn.node.Node;
 import artronics.gsdwn.node.SdwnNode;
 import artronics.gsdwn.packet.Packet;
 import artronics.gsdwn.packet.PacketFactory;
 import artronics.gsdwn.packet.SdwnPacketFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -19,14 +18,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-@RunWith(MockitoJUnitRunner.class)
 public class NetworkMapUpdaterTest
 {
     NetworkMap networkMap = new SdwnNetworkMap();
     BlockingQueue<Packet> queue = new LinkedBlockingQueue<>();
 
-    @InjectMocks
-    WeightCalculator weightCalculator = new RssiSimpleWeightCalculator();
+    //It always return a fixed number for weight
+    WeightCalculator weightCalculator = new FixedWeightCalculator(100.0);
 
     FakePacketFactory factory = new FakePacketFactory();
 
@@ -215,4 +213,20 @@ public class NetworkMapUpdaterTest
         return packetFactory.create(factory.createReportPacket(src, dst, 1, 255, neighbors));
     }
 
+}
+
+class FixedWeightCalculator implements WeightCalculator
+{
+    double weight;
+
+    public FixedWeightCalculator(double weight)
+    {
+        this.weight = weight;
+    }
+
+    @Override
+    public double getWeight(Node node, Neighbor neighbor)
+    {
+        return 100;
+    }
 }
