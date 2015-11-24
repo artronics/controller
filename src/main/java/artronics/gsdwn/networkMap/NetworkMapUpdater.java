@@ -12,26 +12,24 @@ import artronics.gsdwn.packet.SdwnReportPacket;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class NetworkMapUpdater implements Runnable
 {
     private final static Packet POISON_PILL = new PoisonPacket();
     private final GraphDelegator graphDelegator;
 
-    private final BlockingQueue<Packet> queue;
+    private final BlockingQueue<Packet> queue = new LinkedBlockingQueue<>();
     private final NetworkMap networkMap;
     private final WeightCalculator weightCalculator;
 
-    public NetworkMapUpdater(BlockingQueue<Packet> queue,
-                             NetworkMap networkMap,
+    public NetworkMapUpdater(NetworkMap networkMap,
                              WeightCalculator weightCalculator)
     {
-        this.queue = queue;
         this.networkMap = networkMap;
         this.weightCalculator = weightCalculator;
         this.graphDelegator = new GraphDelegator(networkMap.getNetworkGraph());
     }
-
 
     @Override
     public void run()
@@ -104,6 +102,11 @@ public class NetworkMapUpdater implements Runnable
     public void stop()
     {
         queue.add(POISON_PILL);
+    }
+
+    public BlockingQueue<Packet> getPacketQueue()
+    {
+        return queue;
     }
 
     private class Report

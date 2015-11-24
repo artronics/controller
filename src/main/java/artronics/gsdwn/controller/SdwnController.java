@@ -29,8 +29,7 @@ public class SdwnController implements Controller
     private final BlockingQueue<Packet> stcPackets = new LinkedBlockingQueue<>();
 
     //For NetworkMapUpdater
-    private final BlockingQueue<Packet> mapPackets = new LinkedBlockingQueue<>();
-    private final WeightCalculator weightCalculator = new RssiSimpleWeightCalculator();
+    private final BlockingQueue<Packet> mapUpdaterQueue;
 
     private final PacketFactory packetFactory = new SdwnPacketFactory();
 
@@ -38,8 +37,7 @@ public class SdwnController implements Controller
 
     private final ShortestPathFinder pathFinder = new SdwnShortestPathFinder(networkMap);
 
-    private final NetworkMapUpdater mapUpdater =
-            new NetworkMapUpdater(mapPackets, networkMap, weightCalculator);
+    private final NetworkMapUpdater mapUpdater;
 
     private final Statistics statistics = new StatisticsImpl(stcPackets);
 
@@ -54,7 +52,7 @@ public class SdwnController implements Controller
                     if (packet == POISON_PILL)
                         break;
 
-                    mapPackets.add(packet);
+                    mapUpdaterQueue.add(packet);
                     stcPackets.add(packet);
 
                     processPacket(packet);
@@ -110,11 +108,15 @@ public class SdwnController implements Controller
         }
     };
 
-    public SdwnController(DeviceConnection deviceConnection)
+    public SdwnController(DeviceConnection deviceConnection, NetworkMapUpdater mapUpdater)
     {
         this.deviceConnection = deviceConnection;
+        this.mapUpdater = mapUpdater;
+
         chpRxMsg = this.deviceConnection.getRxQueue();
         chpTxMsg = this.deviceConnection.getTxQueue();
+
+        mapUpdaterQueue = this.mapUpdater.getPacketQueue();
     }
 
     @Override
@@ -184,12 +186,14 @@ public class SdwnController implements Controller
         mapUpdater.stop();
     }
 
-    public BlockingQueue<Packet> getCntRxPackets()
+    @Override
+    public BlockingQueue<Packet> getCntRxPacketsQueue()
     {
         return cntRxPackets;
     }
 
-    public BlockingQueue<Packet> getCntTxPackets()
+    @Override
+    public BlockingQueue<Packet> getCntTxPacketsQueue()
     {
         return cntTxPackets;
     }
