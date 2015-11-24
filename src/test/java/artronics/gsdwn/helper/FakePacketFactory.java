@@ -108,6 +108,12 @@ public class FakePacketFactory
         return SdwnDataPacket.create(createRawDataPacket(src, dst, 10));
     }
 
+    public Packet createDataPacket()
+    {
+        return SdwnDataPacket.create(createRawDataPacket(30, 0, 10));
+
+    }
+
     public List<Integer> createRawDataPacket(int src, int dst)
     {
         return createRawDataPacket(src, dst, 10);

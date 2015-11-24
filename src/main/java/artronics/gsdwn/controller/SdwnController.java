@@ -3,6 +3,7 @@ package artronics.gsdwn.controller;
 import artronics.chaparMini.DeviceConnection;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.log.Log;
+import artronics.gsdwn.log.SdwnPacketLogger;
 import artronics.gsdwn.networkMap.NetworkMap;
 import artronics.gsdwn.networkMap.NetworkMapUpdater;
 import artronics.gsdwn.networkMap.SdwnShortestPathFinder;
@@ -52,9 +53,12 @@ public class SdwnController implements Controller
         {
             while (true) {
                 try {
-                    List<Integer> msg = chpRxMsg.take();
+                    final List<Integer> msg = chpRxMsg.take();
 
-                    Packet packet = packetFactory.create(msg);
+                    final Packet packet = packetFactory.create(msg);
+                    if (packet == null) {
+                        Log.PACKET.error(new SdwnPacketLogger().logPacket(msg));
+                    }
                     cntRxPackets.add(packet);
 
 
