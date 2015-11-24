@@ -26,26 +26,26 @@ public class SdwnOpenPathPacket extends SdwnBasePacket
      */
     public static SdwnOpenPathPacket create(List<Node> nodes)
     {
-
-        int len = HEADER_INDEX + 2 * nodes.size() - 4;
         int src = nodes.get(0).getAddress();
         int dst = nodes.get(nodes.size() - 1).getAddress();
+
+        return create(src, dst, nodes);
+    }
+
+    public static SdwnOpenPathPacket create(int src, int dst, List<Node> nodes)
+    {
+        int len = HEADER_INDEX + 2 * nodes.size();
 
         List<Integer> content = new ArrayList<>(
                 SdwnPacketHeader.create(len, SdwnPacketType.OPEN_PATH, src, dst));
 
-        nodes.remove(0);//remove src
-        nodes.remove(nodes.size()-1);//remove dst
-
         List<Integer> payload = new ArrayList<>();
-        int pathLength = nodes.size()*2;
-        List<Integer> addrs = new ArrayList<>();
 
-        for (int i = 0; i < nodes.size(); i ++ ) {
+        for (int i = 0; i < nodes.size(); i++) {
             int addr = nodes.get(i).getAddress();
-            payload.add(i*2,
+            payload.add(i * 2,
                         getHighAddress(addr));
-            payload.add(i*2+1,
+            payload.add(i * 2 + 1,
                         getLowAddress(addr));
         }
 

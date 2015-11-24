@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class SdwnOpenPathPacketTest
 {
@@ -36,10 +36,12 @@ public class SdwnOpenPathPacketTest
 
     @Test
     public void payload_should_contains_the_path(){
-        List<Integer> addrs = packet.getNodesAddresses(packet.getContent());
-        assertThat(addrs.size(),equalTo(2));
-        assertThat(addrs.get(0),equalTo(1));
-        assertThat(addrs.get(1),equalTo(2));
+        List<Integer> addrs = SdwnOpenPathPacket.getNodesAddresses(packet.getContent());
+        assertThat(addrs.size(), equalTo(4));
+        assertThat(addrs.get(0), equalTo(0));
+        assertThat(addrs.get(1), equalTo(1));
+        assertThat(addrs.get(2), equalTo(2));
+        assertThat(addrs.get(3), equalTo(3));
     }
 
 }
