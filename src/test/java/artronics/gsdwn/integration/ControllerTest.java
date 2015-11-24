@@ -72,7 +72,7 @@ public class ControllerTest
                                                     factory.createNeighbors(35, 36, 37)));
 
         //controller send data to 300
-        // 10 is the data length. it doesn't matter
+        // 10 is the data length and it doesn't matter what is its value
         //Since this process is just related to DeviceConnection
         //at this point we assume that sink already has received our
         //data packet
@@ -80,8 +80,6 @@ public class ControllerTest
         //give it some time so mapUpdater can construct the graph
         Thread.sleep(400);
 
-        //Sink will response with RuleRequest
-        deviceRxQ.add(factory.createRawRuleRequestPacket(SINK_ADDR, 300, 10));
     }
 
 
@@ -91,9 +89,13 @@ public class ControllerTest
     @Test
     public void it_should_send_OpenPath_for_sink_node() throws InterruptedException
     {
+        //Sink will response with RuleRequest
+        deviceRxQ.add(factory.createRawRuleRequestPacket(SINK_ADDR, 300, 10));
         actPacket = deviceTxQ.take();
-        Thread.sleep(400);
-        expPacket = factory.createRawOpenPathPacket(SINK_ADDR, 300, Arrays.asList(30, 36));
+
+        expPacket = factory.createRawOpenPathPacket(SINK_ADDR,
+                                                    300,
+                                                    Arrays.asList(SINK_ADDR, 30, 35, 300));
 
         assertEquals(expPacket, actPacket);
 

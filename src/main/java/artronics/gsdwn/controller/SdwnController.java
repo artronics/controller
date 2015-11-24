@@ -2,6 +2,7 @@ package artronics.gsdwn.controller;
 
 import artronics.chaparMini.DeviceConnection;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
+import artronics.gsdwn.log.Log;
 import artronics.gsdwn.networkMap.NetworkMap;
 import artronics.gsdwn.networkMap.NetworkMapUpdater;
 import artronics.gsdwn.networkMap.SdwnShortestPathFinder;
@@ -12,6 +13,7 @@ import artronics.gsdwn.packet.*;
 import artronics.gsdwn.statistics.Statistics;
 import artronics.gsdwn.statistics.StatisticsImpl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,7 +45,49 @@ public class SdwnController implements Controller
     private final NetworkMapUpdater mapUpdater;
 
     private final Statistics statistics = new StatisticsImpl(stcPackets);
+    private final Runnable msgBroker = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            while (true) {
+                try {
+                    List<Integer> msg = chpRxMsg.take();
 
+                    Packet packet = packetFactory.create(msg);
+                    cntRxPackets.add(packet);
+
+
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+    /*
+        Sdwn Controller has nothing to do with received packets
+        that it takes from outside (cntTxPackets). It just gets the
+        content of packet and pass it to deviceConnection.
+     */
+    private final Runnable cntTxListener = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            while (true) {
+                try {
+                    Packet packet = cntTxPackets.take();
+
+                    List<Integer> msg = packet.getContent();
+                    chpTxMsg.add(msg);
+
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+    private Integer sinkAddress = 0;
     private final Runnable packetBroker = new Runnable()
     {
         @Override
@@ -66,54 +110,17 @@ public class SdwnController implements Controller
             }
         }
     };
-
-    private final Runnable msgBroker = new Runnable()
-    {
-        @Override
-        public void run()
-        {
-            while (true){
-                try {
-                    List<Integer> msg = chpRxMsg.take();
-
-                    Packet packet = packetFactory.create(msg);
-                    cntRxPackets.add(packet);
-
-
-                }catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
-    /*
-        Sdwn Controller has nothing to do with received packets
-        that it takes from outside (cntTxPackets). It just gets the
-        content of packet and pass it to deviceConnection.
-     */
-    private final Runnable cntTxListener = new Runnable()
-    {
-        @Override
-        public void run()
-        {
-            while (true){
-                try {
-                    Packet packet = cntTxPackets.take();
-
-                    List<Integer> msg = packet.getContent();
-                    chpTxMsg.add(msg);
-
-                }catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
     public SdwnController(DeviceConnection deviceConnection, NetworkMap networkMap,
                           NetworkMapUpdater mapUpdater)
     {
+        this(0, deviceConnection, networkMap, mapUpdater);
+    }
+
+    public SdwnController(Integer sinkAddress, DeviceConnection deviceConnection,
+                          NetworkMap networkMap,
+                          NetworkMapUpdater mapUpdater)
+    {
+        this.sinkAddress = sinkAddress;
         this.deviceConnection = deviceConnection;
         this.networkMap = networkMap;
         this.mapUpdater = mapUpdater;
@@ -124,6 +131,10 @@ public class SdwnController implements Controller
         chpTxMsg = this.deviceConnection.getTxQueue();
 
         mapUpdaterQueue = this.mapUpdater.getPacketQueue();
+
+        //Add sink node as the first node in network.
+        this.networkMap.addNode(new SdwnNode(sinkAddress));
+        Log.SDWN.debug("Add Sink [address: " + sinkAddress + " ]");
     }
 
     @Override
@@ -170,13 +181,17 @@ public class SdwnController implements Controller
 
 //        List<Node> nodes = pathFinder.getShortestPath(srcNode, dstNode);
         List<Node> nodes = pathFinder.getShortestPath(dstNode, srcNode);
-        nodes.add(0,srcNode);
-        nodes.add(dstNode);
 
-        Packet packet= SdwnOpenPathPacket.create(nodes);
+        Packet response;
+        if (srcNode.getAddress() == sinkAddress) {
+            Collections.reverse(nodes);
+            response = SdwnOpenPathPacket.create(sinkAddress, dstNode.getAddress(), nodes);
+        }else {
+            //src and dst are extracted from nodes
+            response = SdwnOpenPathPacket.create(nodes);
+        }
 
-        cntTxPackets.add(packet);
-
+        cntTxPackets.add(response);
     }
 
     private void processReportPacket(SdwnReportPacket packet)
