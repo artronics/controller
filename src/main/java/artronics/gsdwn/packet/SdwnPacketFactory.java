@@ -13,6 +13,9 @@ public class SdwnPacketFactory implements PacketFactory
         Packet packet = null;
 
         switch (SdwnPacketHelper.getType(packetContent)) {
+            case DATA:
+                SdwnDataPacket.create(packetContent);
+                break;
             case REPORT:
                 packet = new SdwnReportPacket(packetContent);
                 break;

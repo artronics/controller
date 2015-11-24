@@ -61,7 +61,7 @@ public class SdwnBasePacket implements Packet
     {
         String s = "";
         for (Integer i : content) {
-            s += i.toString();
+            s += String.format("%-3d", i);
             s += " ,";
         }
 

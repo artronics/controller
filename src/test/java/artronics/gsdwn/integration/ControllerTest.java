@@ -7,6 +7,7 @@ import artronics.gsdwn.controller.SdwnController;
 import artronics.gsdwn.helper.FakePacketFactory;
 import artronics.gsdwn.networkMap.*;
 import artronics.gsdwn.packet.Packet;
+import artronics.gsdwn.packet.SdwnDataPacket;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,8 +54,8 @@ public class ControllerTest
         cntRxQ = controller.getCntRxPacketsQueue();
         cntTxQ = controller.getCntTxPacketsQueue();
 
-        deviceRxQ = mockDevCon.getRxQueue();
-        deviceTxQ = mockDevCon.getTxQueue();
+        deviceRxQ = mockDevCon.getChaparRxQueue();
+        deviceTxQ = mockDevCon.getChaparTxQueue();
 
         controller.start();
 
@@ -81,6 +82,34 @@ public class ControllerTest
         Thread.sleep(400);
 
     }
+
+    /*
+        When we send a data packet controller must take the content of
+        that packet and send it as it is.
+     */
+    @Test
+    public void test_sending_data() throws InterruptedException
+    {
+        SdwnDataPacket packet = SdwnDataPacket.create(SINK_ADDR, 300, 10);
+        cntTxQ.add(packet);
+
+        actPacket = deviceTxQ.take();
+        expPacket = factory.createRawDataPacket(SINK_ADDR, 300, 10);
+
+        assertEquals(expPacket, actPacket);
+    }
+
+//    @Test
+//    public void test_sending_data_in_loop() throws InterruptedException
+//    {
+//        SdwnDataPacket packet = SdwnDataPacket.create(SINK_ADDR,300,10);
+//        cntTxQ.add(packet);
+//
+//        actPacket = deviceTxQ.take();
+//        expPacket = factory.createRawDataPacket(SINK_ADDR,300,10);
+//
+//        assertEquals(expPacket,actPacket);
+//    }
 
 
     /*
@@ -183,14 +212,12 @@ class MockDeviceConnection implements DeviceConnection
 
     }
 
-    @Override
-    public BlockingQueue<List<Integer>> getTxQueue()
+    public BlockingQueue<List<Integer>> getChaparTxQueue()
     {
         return txQueue;
     }
 
-    @Override
-    public BlockingQueue<List<Integer>> getRxQueue()
+    public BlockingQueue<List<Integer>> getChaparRxQueue()
     {
         return rxQueue;
     }

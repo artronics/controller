@@ -127,8 +127,8 @@ public class SdwnController implements Controller
 
         this.pathFinder = new SdwnShortestPathFinder(networkMap);
 
-        chpRxMsg = this.deviceConnection.getRxQueue();
-        chpTxMsg = this.deviceConnection.getTxQueue();
+        chpRxMsg = this.deviceConnection.getChaparRxQueue();
+        chpTxMsg = this.deviceConnection.getChaparTxQueue();
 
         mapUpdaterQueue = this.mapUpdater.getPacketQueue();
 
@@ -162,6 +162,10 @@ public class SdwnController implements Controller
     {
 
         switch (packet.getType()) {
+            case DATA:
+                SdwnDataPacket dataPacket = (SdwnDataPacket) packet;
+                processDataPacket(dataPacket);
+                break;
             case REPORT:
                 SdwnReportPacket rPacket = (SdwnReportPacket) packet;
                 processReportPacket(rPacket);
@@ -172,6 +176,10 @@ public class SdwnController implements Controller
                 break;
         }
 
+    }
+
+    private void processDataPacket(SdwnDataPacket dataPacket)
+    {
     }
 
     private void processRuleRequestPacket(SdwnRuleRequestPacket rq)

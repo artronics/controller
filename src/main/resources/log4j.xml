@@ -28,7 +28,8 @@
     </logger>
 
     <logger name="packet" additivity="false">
-        <level value="debug"/>
+        <!--<level value="debug"/>-->
+        <level value="error"/>
         <appender-ref ref="console"></appender-ref>
     </logger>
 
