@@ -21,11 +21,11 @@ public class ControllerTest
 {
     private static final int SINK_ADDR = 0;
 
-    DeviceConnection fakeDevCon = new FakeDeviceConn();
+    DeviceConnection mockDevCon = new MockDeviceConnection();
     WeightCalculator weightCalculator = new FixedWeightCalculator(100);
     NetworkMap networkMap = new SdwnNetworkMap();
     NetworkMapUpdater mapUpdater = new NetworkMapUpdater(networkMap, weightCalculator);
-    Controller controller = new SdwnController(fakeDevCon, networkMap, mapUpdater);
+    Controller controller = new SdwnController(mockDevCon, networkMap, mapUpdater);
 
     FakePacketFactory factory = new FakePacketFactory();
 
@@ -53,8 +53,8 @@ public class ControllerTest
         cntRxQ = controller.getCntRxPacketsQueue();
         cntTxQ = controller.getCntTxPacketsQueue();
 
-        deviceRxQ = fakeDevCon.getRxQueue();
-        deviceTxQ = fakeDevCon.getTxQueue();
+        deviceRxQ = mockDevCon.getRxQueue();
+        deviceTxQ = mockDevCon.getTxQueue();
 
         controller.start();
 
@@ -98,12 +98,68 @@ public class ControllerTest
                                                     Arrays.asList(SINK_ADDR, 30, 35, 300));
 
         assertEquals(expPacket, actPacket);
-
     }
+
+    @Test
+    public void it_should_send_OpenPath_for_other_nodes_than_sink() throws InterruptedException
+    {
+        //Sink will response with RuleRequest
+        deviceRxQ.add(factory.createRawRuleRequestPacket(300, SINK_ADDR, 10));
+        actPacket = deviceTxQ.take();
+
+        expPacket = factory.createRawOpenPathPacket(SINK_ADDR,
+                                                    300,
+                                                    Arrays.asList(SINK_ADDR, 30, 35, 300));
+
+        assertEquals(expPacket, actPacket);
+    }
+
+    /*
+        Now let node 300 sends a new report and states it has
+        no connection any more with node 35.
+     */
+    @Test
+    public void if_a_link_is_dropped_it_should_find_another_path() throws InterruptedException
+    {
+        //drop link to node 35
+        deviceRxQ.add(factory.createRawReportPacket(300,
+                                                    SINK_ADDR,
+                                                    factory.createNeighbors(36, 37)));
+
+        deviceRxQ.add(factory.createRawRuleRequestPacket(300, SINK_ADDR, 10));
+        actPacket = deviceTxQ.take();
+
+        //new path should contains node 36
+        expPacket = factory.createRawOpenPathPacket(SINK_ADDR,
+                                                    300,
+                                                    Arrays.asList(SINK_ADDR, 30, 36, 300));
+
+        assertEquals(expPacket, actPacket);
+    }
+
+    //TODO there is no way to change the weight in this integration test. Move it to unit test
+//    @Test
+//    public void it_should_choose_path_with_lowest_weight() throws InterruptedException
+//    {
+//        deviceRxQ.add(factory.createRawReportPacket(300, SINK_ADDR,
+//                                                    Arrays.asList(
+//                                                            0, 35, 100,
+//                                                            0, 36, 100,
+//                                                            0, 37, 50)));
+//
+//        deviceRxQ.add(factory.createRawRuleRequestPacket(300, SINK_ADDR, 10));
+//        actPacket = deviceTxQ.take();
+//
+//        expPacket = factory.createRawOpenPathPacket(SINK_ADDR,
+//                                                    300,
+//                                                    Arrays.asList(SINK_ADDR, 30, 35, 300));
+//
+//        assertEquals(expPacket, actPacket);
+//    }
 
 }
 
-class FakeDeviceConn implements DeviceConnection
+class MockDeviceConnection implements DeviceConnection
 {
 
     BlockingQueue<List<Integer>> rxQueue = new LinkedBlockingQueue<>();
