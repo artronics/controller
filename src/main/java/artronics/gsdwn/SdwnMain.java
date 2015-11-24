@@ -35,7 +35,7 @@ public class SdwnMain
 
         Thread.sleep(10000);
 
-        SdwnDataPacket packet = SdwnDataPacket.create(0, 30, 5);
+        SdwnDataPacket packet = SdwnDataPacket.create(0, 30, 10);
         BlockingQueue<Packet> queue = controller.getCntTxPacketsQueue();
         queue.add(packet);
 
