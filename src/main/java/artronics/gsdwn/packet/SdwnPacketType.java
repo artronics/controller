@@ -6,9 +6,9 @@ public enum SdwnPacketType
     MALFORMED(1),
     REPORT(2),
     BEACON(3),
-    RULE_REQUEST(128),
-    RULE_RESPONSE(4),
-    OPEN_PATH(5);
+    RL_REQ(128),
+    RL_RES(4),
+    OPN_PT(5);
 
     private int value;
 

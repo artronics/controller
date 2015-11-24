@@ -170,7 +170,7 @@ public class SdwnController implements Controller
                 SdwnReportPacket rPacket = (SdwnReportPacket) packet;
                 processReportPacket(rPacket);
                 break;
-            case RULE_REQUEST:
+            case RL_REQ:
                 SdwnRuleRequestPacket rq = (SdwnRuleRequestPacket) packet;
                 processRuleRequestPacket(rq);
                 break;

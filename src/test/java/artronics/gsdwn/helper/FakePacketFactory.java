@@ -139,7 +139,7 @@ public class FakePacketFactory
     public List<Integer> createRawRuleRequestPacket(int src, int dst, int echoPayloadLen)
     {
         List<Integer> packet = createHeader(10 + echoPayloadLen,
-                                            SdwnPacketType.RULE_REQUEST,
+                                            SdwnPacketType.RL_REQ,
                                             src,
                                             dst);
         List<Integer> payload = new ArrayList<>();
@@ -156,7 +156,7 @@ public class FakePacketFactory
     public List<Integer> createRawOpenPathPacket(int src, int dst, List<Integer> path)
     {
         List<Integer> packet = createHeader(10 + path.size() * 2,
-                                            SdwnPacketType.OPEN_PATH,
+                                            SdwnPacketType.OPN_PT,
                                             src,
                                             dst);
         List<Integer> payload = new ArrayList<>();

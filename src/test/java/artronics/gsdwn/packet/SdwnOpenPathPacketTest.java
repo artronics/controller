@@ -31,7 +31,7 @@ public class SdwnOpenPathPacketTest
         assertThat(packet.getSrcShortAddress(),equalTo(0));//source
         assertThat(packet.getDstShortAddress(),equalTo(3));//destination
 
-        assertThat(packet.getType(),equalTo(SdwnPacketType.OPEN_PATH));
+        assertThat(packet.getType(), equalTo(SdwnPacketType.OPN_PT));
     }
 
     @Test

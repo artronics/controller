@@ -39,7 +39,7 @@ public class SdwnMain
         BlockingQueue<Packet> queue = controller.getCntTxPacketsQueue();
         queue.add(packet);
 
-//        Thread.sleep(10000);
+        Thread.sleep(10000);
 
         for (int i = 0; i < 1000; i++) {
             SdwnDataPacket dataPacket = SdwnDataPacket.create(0, 30, 10);

@@ -49,12 +49,13 @@ public final class SdwnPacketHelper
         int sourceAddL = receivedBytes.get(sourceL);
         int sourceAddH = receivedBytes.get(sourceH);
         int source_addr = getIntAddress(sourceAddL, sourceAddH);
-        //If packet is beacon and the address matches with sink unibo has OUT direction.
+
+        //if source address is sink it is TX
         if (source_addr == SdwnPacket.SINK_ADDRESS) {
-            return SdwnPacketDirection.OUT;
+            return SdwnPacketDirection.TX;
         }
 
-        return SdwnPacketDirection.IN;
+        return SdwnPacketDirection.RX;
     }
 
     public static int getSourceAddress(List<Integer> bytes)

@@ -51,7 +51,7 @@ public class SdwnBasePacket implements Packet
     public String toString()
     {
         String s = "";
-        s += String.format("%-13s", getType().toString());
+        s += String.format("%-6s", getType().toString());
         s += printContent(getContent());
 
         return s;

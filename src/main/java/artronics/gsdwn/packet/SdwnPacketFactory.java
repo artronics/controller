@@ -19,7 +19,7 @@ public class SdwnPacketFactory implements PacketFactory
             case REPORT:
                 packet = new SdwnReportPacket(packetContent);
                 break;
-            case RULE_REQUEST:
+            case RL_REQ:
                 packet = new SdwnRuleRequestPacket(packetContent);
                 break;
         }

@@ -37,7 +37,7 @@ public class SdwnOpenPathPacket extends SdwnBasePacket
         int len = HEADER_INDEX + 2 * nodes.size();
 
         List<Integer> content = new ArrayList<>(
-                SdwnPacketHeader.create(len, SdwnPacketType.OPEN_PATH, src, dst));
+                SdwnPacketHeader.create(len, SdwnPacketType.OPN_PT, src, dst));
 
         List<Integer> payload = new ArrayList<>();
 
