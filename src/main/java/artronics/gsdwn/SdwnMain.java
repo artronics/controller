@@ -13,6 +13,7 @@ import artronics.gsdwn.networkMap.SdwnNetworkMap;
 import artronics.gsdwn.packet.Packet;
 import artronics.gsdwn.packet.SdwnDataPacket;
 
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 
 public class SdwnMain
@@ -42,7 +43,9 @@ public class SdwnMain
         Thread.sleep(10000);
 
         for (int i = 0; i < 1000; i++) {
-            SdwnDataPacket dataPacket = SdwnDataPacket.create(0, 30, 10);
+            SdwnDataPacket dataPacket = SdwnDataPacket.create(0, 30, Arrays.asList(
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, i
+            ));
             queue.add(dataPacket);
             Thread.sleep(1000);
         }
