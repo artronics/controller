@@ -2,7 +2,10 @@ package artronics.gsdwn.controller;
 
 import artronics.chaparMini.DeviceConnection;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
-import artronics.gsdwn.networkMap.*;
+import artronics.gsdwn.networkMap.NetworkMap;
+import artronics.gsdwn.networkMap.NetworkMapUpdater;
+import artronics.gsdwn.networkMap.SdwnShortestPathFinder;
+import artronics.gsdwn.networkMap.ShortestPathFinder;
 import artronics.gsdwn.node.Node;
 import artronics.gsdwn.node.SdwnNode;
 import artronics.gsdwn.packet.*;
@@ -33,9 +36,9 @@ public class SdwnController implements Controller
 
     private final PacketFactory packetFactory = new SdwnPacketFactory();
 
-    private final NetworkMap networkMap = new SdwnNetworkMap();
+    private final NetworkMap networkMap;
 
-    private final ShortestPathFinder pathFinder = new SdwnShortestPathFinder(networkMap);
+    private final ShortestPathFinder pathFinder;
 
     private final NetworkMapUpdater mapUpdater;
 
@@ -108,10 +111,14 @@ public class SdwnController implements Controller
         }
     };
 
-    public SdwnController(DeviceConnection deviceConnection, NetworkMapUpdater mapUpdater)
+    public SdwnController(DeviceConnection deviceConnection, NetworkMap networkMap,
+                          NetworkMapUpdater mapUpdater)
     {
         this.deviceConnection = deviceConnection;
+        this.networkMap = networkMap;
         this.mapUpdater = mapUpdater;
+
+        this.pathFinder = new SdwnShortestPathFinder(networkMap);
 
         chpRxMsg = this.deviceConnection.getRxQueue();
         chpTxMsg = this.deviceConnection.getTxQueue();

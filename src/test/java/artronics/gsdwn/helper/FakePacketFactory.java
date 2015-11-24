@@ -40,7 +40,7 @@ public class FakePacketFactory
         };
         header = Arrays.asList(bytes);
 
-        return header;
+        return new ArrayList<>(header);
     }
 
     public Packet createReportPacket()
@@ -56,6 +56,11 @@ public class FakePacketFactory
     public Packet createReportPacket(int src, int dst, List<Integer> neighbors)
     {
         return createReportPacket(src, dst, 1, 255, neighbors);
+    }
+
+    public List<Integer> createRawReportPacket(int src, int dst, List<Integer> neighbors)
+    {
+        return createRawReportPacket(src, dst, 1, 255, neighbors);
     }
 
     public List<Integer> createRawReportPacket(int src, int dst, int dis, int bat,
@@ -98,6 +103,16 @@ public class FakePacketFactory
         return neighbors;
     }
 
+    public Packet createDataPacket(int src, int dst)
+    {
+        return SdwnDataPacket.create(createRawDataPacket(src, dst, 10));
+    }
+
+    public List<Integer> createRawDataPacket(int src, int dst)
+    {
+        return createRawDataPacket(src, dst, 10);
+    }
+
     public List<Integer> createRawDataPacket(int src, int dst, int payloadLen)
     {
         List<Integer> header = createHeader(SdwnPacket.HEADER_INDEX + payloadLen,
@@ -116,4 +131,43 @@ public class FakePacketFactory
         return createRawDataPacket(30, 0, 10);
     }
 
+    public Packet createRuleRequestPacket(int src, int dst, int echoPayloadLen)
+    {
+        return new SdwnRuleRequestPacket(createRawRuleRequestPacket(src, dst, echoPayloadLen));
+    }
+
+    public List<Integer> createRawRuleRequestPacket(int src, int dst, int echoPayloadLen)
+    {
+        List<Integer> packet = createHeader(10 + echoPayloadLen,
+                                            SdwnPacketType.RULE_REQUEST,
+                                            src,
+                                            dst);
+        List<Integer> payload = new ArrayList<>();
+
+        for (int i = 0; i < echoPayloadLen; i++) {
+            payload.add(i);
+        }
+
+        packet.addAll(payload);
+
+        return packet;
+    }
+
+    public List<Integer> createRawOpenPathPacket(int src, int dst, List<Integer> path)
+    {
+        List<Integer> packet = createHeader(10 + path.size() * 2,
+                                            SdwnPacketType.OPEN_PATH,
+                                            src,
+                                            dst);
+        List<Integer> payload = new ArrayList<>();
+
+        for (int i = 0; i < path.size(); i++) {
+            payload.add(i * 2, SdwnPacketHelper.getHighAddress(path.get(i)));
+            payload.add(i * 2 + 1, SdwnPacketHelper.getLowAddress(path.get(i)));
+        }
+
+        packet.addAll(payload);
+
+        return packet;
+    }
 }

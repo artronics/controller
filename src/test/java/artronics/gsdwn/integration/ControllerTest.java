@@ -5,34 +5,97 @@ import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.controller.Controller;
 import artronics.gsdwn.controller.SdwnController;
 import artronics.gsdwn.helper.FakePacketFactory;
+import artronics.gsdwn.networkMap.*;
+import artronics.gsdwn.packet.Packet;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static org.junit.Assert.assertEquals;
+
 public class ControllerTest
 {
-    DeviceConnection fakeDevCon = new FakeDeviceConn();
+    private static final int SINK_ADDR = 0;
 
-    Controller controller = new SdwnController(fakeDevCon);
+    DeviceConnection fakeDevCon = new FakeDeviceConn();
+    WeightCalculator weightCalculator = new FixedWeightCalculator(100);
+    NetworkMap networkMap = new SdwnNetworkMap();
+    NetworkMapUpdater mapUpdater = new NetworkMapUpdater(networkMap, weightCalculator);
+    Controller controller = new SdwnController(fakeDevCon, networkMap, mapUpdater);
 
     FakePacketFactory factory = new FakePacketFactory();
 
+    BlockingQueue<Packet> cntRxQ;
+    BlockingQueue<Packet> cntTxQ;
+
+    BlockingQueue<List<Integer>> deviceRxQ;
+    BlockingQueue<List<Integer>> deviceTxQ;
+
+
+    List<Integer> actPacket;
+    List<Integer> expPacket;
+
+    /*
+        Here is the scenario. First we construct a simple graph. It looks
+        like this. Sink is only connected to node 30. node 30 is connected to 35,36,37 and node
+        300 is connected
+         to 35,36,37 as well. Controller send Data to 300. Then each test
+         will accordingly assert controller response.
+
+     */
     @Before
     public void setUp() throws Exception
     {
+        cntRxQ = controller.getCntRxPacketsQueue();
+        cntTxQ = controller.getCntTxPacketsQueue();
+
+        deviceRxQ = fakeDevCon.getRxQueue();
+        deviceTxQ = fakeDevCon.getTxQueue();
+
         controller.start();
 
-        controller.processPacket(factory.createReportPacket());
+        //First we send a report from Sink
+        deviceRxQ.add(factory.createRawReportPacket(SINK_ADDR,
+                                                    SINK_ADDR,
+                                                    factory.createNeighbors(30)));
+        //Send two report packet to construct the graph.
+        deviceRxQ.add(factory.createRawReportPacket(30,
+                                                    SINK_ADDR,
+                                                    factory.createNeighbors(0, 35, 36, 37)));
+        // node 300 is connected to 35,36,37
+        deviceRxQ.add(factory.createRawReportPacket(300,
+                                                    SINK_ADDR,
+                                                    factory.createNeighbors(35, 36, 37)));
+
+        //controller send data to 300
+        // 10 is the data length. it doesn't matter
+        //Since this process is just related to DeviceConnection
+        //at this point we assume that sink already has received our
+        //data packet
+
+        //give it some time so mapUpdater can construct the graph
+        Thread.sleep(400);
+
+        //Sink will response with RuleRequest
+        deviceRxQ.add(factory.createRawRuleRequestPacket(SINK_ADDR, 300, 10));
     }
 
 
+    /*
+        Now Controller should send OpenPath packet in response to RuleReq
+     */
     @Test
-    public void it_should_send_rule_response_for_sink_node()
+    public void it_should_send_OpenPath_for_sink_node() throws InterruptedException
     {
+        actPacket = deviceTxQ.take();
+        Thread.sleep(400);
+        expPacket = factory.createRawOpenPathPacket(SINK_ADDR, 300, Arrays.asList(30, 36));
 
+        assertEquals(expPacket, actPacket);
 
     }
 
