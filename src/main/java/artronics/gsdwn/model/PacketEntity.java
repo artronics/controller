@@ -1,4 +1,4 @@
-package artronics.gsdwn.packet;
+package artronics.gsdwn.model;
 
 
 import javax.persistence.*;
@@ -12,7 +12,7 @@ public class PacketEntity
     private Integer dstShortAddress;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(nullable = false, unique = true)
     public Long getId()
     {
