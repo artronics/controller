@@ -1,13 +1,17 @@
 package artronics.gsdwn.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "sdwn_controller")
 public class ControllerEntity
 {
     private Long id;
+
     private String ip;
+
+    private Set<Session> sessions;
 
     public ControllerEntity(String ip)
     {
@@ -25,6 +29,17 @@ public class ControllerEntity
     public void setId(Long id)
     {
         this.id = id;
+    }
+
+    @OneToMany(mappedBy = "controllerEntity")
+    public Set<Session> getSessions()
+    {
+        return sessions;
+    }
+
+    public void setSessions(Set<Session> sessions)
+    {
+        this.sessions = sessions;
     }
 
     //TODO add validation
