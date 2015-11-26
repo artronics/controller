@@ -1,7 +1,6 @@
 package artronics.gsdwn.model;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "sdwn_controller")
@@ -11,11 +10,10 @@ public class ControllerEntity
 
     private String ip;
 
-    private Set<Session> sessions;
+//    private Set<Session> sessions;
 
-    public ControllerEntity(String ip)
+    public ControllerEntity()
     {
-        this.ip = ip;
     }
 
     @Id
@@ -31,16 +29,16 @@ public class ControllerEntity
         this.id = id;
     }
 
-    @OneToMany(mappedBy = "controllerEntity")
-    public Set<Session> getSessions()
-    {
-        return sessions;
-    }
+//    @OneToMany(mappedBy = "controllerEntity")
+//    public Set<Session> getSessions()
+//    {
+//        return sessions;
+//    }
 
-    public void setSessions(Set<Session> sessions)
-    {
-        this.sessions = sessions;
-    }
+//    public void setSessions(Set<Session> sessions)
+//    {
+//        this.sessions = sessions;
+//    }
 
     //TODO add validation
     @Column(name = "controller_ip", unique = false, nullable = false)

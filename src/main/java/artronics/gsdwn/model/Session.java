@@ -10,7 +10,7 @@ public class Session
     private Long id;
 
     private Set<ControllerEntity> controllerEntities;
-    private ControllerEntity controllerEntity;
+//    private ControllerEntity controllerEntity;
 
     private String description;
 
@@ -27,17 +27,17 @@ public class Session
         this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "controller_id")
-    public ControllerEntity getControllerEntity()
-    {
-        return controllerEntity;
-    }
+//    @ManyToOne
+//    @JoinColumn(name = "controller_id")
+//    public ControllerEntity getControllerEntity()
+//    {
+//        return controllerEntity;
+//    }
 
-    public void setControllerEntity(ControllerEntity controllerEntity)
-    {
-        this.controllerEntity = controllerEntity;
-    }
+//    public void setControllerEntity(ControllerEntity controllerEntity)
+//    {
+//        this.controllerEntity = controllerEntity;
+//    }
 
     @Column(name = "description")
     public String getDescription()

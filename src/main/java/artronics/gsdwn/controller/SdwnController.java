@@ -4,6 +4,7 @@ import artronics.chaparMini.DeviceConnection;
 import artronics.chaparMini.exceptions.ChaparConnectionException;
 import artronics.gsdwn.log.Log;
 import artronics.gsdwn.log.SdwnPacketLogger;
+import artronics.gsdwn.model.ControllerEntity;
 import artronics.gsdwn.networkMap.NetworkMap;
 import artronics.gsdwn.networkMap.NetworkMapUpdater;
 import artronics.gsdwn.networkMap.SdwnShortestPathFinder;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SdwnController implements Controller
+public class SdwnController extends ControllerEntity implements Controller
 {
     private final static Packet POISON_PILL = new PoisonPacket();
 
@@ -46,6 +47,7 @@ public class SdwnController implements Controller
     private final NetworkMapUpdater mapUpdater;
 
     private final Statistics statistics = new StatisticsImpl(stcPackets);
+
     private final Runnable msgBroker = new Runnable()
     {
         @Override
