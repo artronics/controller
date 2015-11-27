@@ -9,8 +9,8 @@ public class Session
 {
     private Long id;
 
-    private Set<ControllerEntity> controllerEntities;
-//    private ControllerEntity controllerEntity;
+    private Set<ControllerConfig> controllerEntities;
+//    private ControllerConfig controllerEntity;
 
     private String description;
 
@@ -29,12 +29,12 @@ public class Session
 
 //    @ManyToOne
 //    @JoinColumn(name = "controller_id")
-//    public ControllerEntity getControllerEntity()
+//    public ControllerConfig getControllerEntity()
 //    {
 //        return controllerEntity;
 //    }
 
-//    public void setControllerEntity(ControllerEntity controllerEntity)
+//    public void setControllerEntity(ControllerConfig controllerEntity)
 //    {
 //        this.controllerEntity = controllerEntity;
 //    }

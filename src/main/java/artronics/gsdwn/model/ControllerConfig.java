@@ -3,8 +3,11 @@ package artronics.gsdwn.model;
 import javax.persistence.*;
 
 @Entity
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.STRING)
+//@DiscriminatorValue(value = "ent")
 @Table(name = "sdwn_controller")
-public class ControllerEntity
+public class ControllerConfig
 {
     private Long id;
 
@@ -12,7 +15,7 @@ public class ControllerEntity
 
 //    private Set<Session> sessions;
 
-    public ControllerEntity()
+    public ControllerConfig()
     {
     }
 
