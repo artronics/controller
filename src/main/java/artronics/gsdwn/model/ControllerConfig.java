@@ -1,17 +1,19 @@
 package artronics.gsdwn.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.STRING)
-//@DiscriminatorValue(value = "ent")
 @Table(name = "sdwn_controller")
 public class ControllerConfig
 {
     private Long id;
 
     private String ip;
+
+    private Date created;
+
+    private Date updated;
 
 //    private Set<Session> sessions;
 
@@ -53,5 +55,37 @@ public class ControllerConfig
     public void setIp(String ip)
     {
         this.ip = ip;
+    }
+
+    @PrePersist
+    protected void onCreate()
+    {
+        created = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate()
+    {
+        updated = new Date();
+    }
+
+    public Date getCreated()
+    {
+        return created;
+    }
+
+    public void setCreated(Date created)
+    {
+        this.created = created;
+    }
+
+    public Date getUpdated()
+    {
+        return updated;
+    }
+
+    public void setUpdated(Date updated)
+    {
+        this.updated = updated;
     }
 }
