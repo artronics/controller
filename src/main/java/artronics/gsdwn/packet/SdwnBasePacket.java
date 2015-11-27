@@ -2,16 +2,20 @@ package artronics.gsdwn.packet;
 
 import artronics.gsdwn.log.Log;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "packets")
 public class SdwnBasePacket implements Packet
 {
-    protected final List<Integer> content;
-
+    protected List<Integer> content;
     protected Integer srcShortAddress;
-
     protected Integer dstShortAddress;
-
+    private Long id;
+    @Transient
     private String timeStamp;
 
     public SdwnBasePacket(List<Integer> content)
@@ -24,27 +28,60 @@ public class SdwnBasePacket implements Packet
         Log.PACKET.debug(toString());
     }
 
-    @Override
-    public List<Integer> getContent()
+
+    @Id
+    @GeneratedValue
+    @Column(nullable = false, unique = true)
+    public Long getId()
     {
-        return content;
+        return id;
     }
 
     @Override
+    @Column(name = "src_short_add")
     public Integer getSrcShortAddress()
     {
         return srcShortAddress;
     }
 
-    @Override
-    public SdwnPacketType getType()
-    {
-        return SdwnPacketHelper.getType(content);
-    }
-
+    @Column(name = "dst_short_add")
     public Integer getDstShortAddress()
     {
         return dstShortAddress;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public void setSrcShortAddress(Integer srcShortAddress)
+    {
+        this.srcShortAddress = srcShortAddress;
+    }
+
+    public void setDstShortAddress(Integer dstShortAddress)
+    {
+        this.dstShortAddress = dstShortAddress;
+    }
+
+    @Override
+    @Transient
+    public List<Integer> getContent()
+    {
+        return content;
+    }
+
+    public void setContent(List<Integer> content)
+    {
+        this.content = content;
+    }
+
+    @Override
+    @Transient
+    public SdwnPacketType getType()
+    {
+        return SdwnPacketHelper.getType(content);
     }
 
     @Override
