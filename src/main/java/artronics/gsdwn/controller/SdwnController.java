@@ -28,29 +28,19 @@ public class SdwnController extends ControllerConfig implements Controller
     private final static Packet POISON_PILL = new PoisonPacket();
 
     private final DeviceConnection deviceConnection;
-
     private final BlockingQueue<List<Integer>> chpRxMsg;
     private final BlockingQueue<List<Integer>> chpTxMsg;
-
     private final BlockingQueue<Packet> cntRxPackets = new LinkedBlockingQueue<>();
     private final BlockingQueue<Packet> cntTxPackets = new LinkedBlockingQueue<>();
-
     //For Statistics
     private final BlockingQueue<Packet> stcPackets = new LinkedBlockingQueue<>();
-
     //For NetworkMapUpdater
     private final BlockingQueue<Packet> mapUpdaterQueue;
-
     private final PacketFactory packetFactory = new SdwnPacketFactory();
-
     private final NetworkMap networkMap;
-
     private final ShortestPathFinder pathFinder;
-
     private final NetworkMapUpdater mapUpdater;
-
     private final Statistics statistics = new StatisticsImpl(stcPackets);
-
     private final Runnable msgBroker = new Runnable()
     {
         @Override
@@ -96,6 +86,7 @@ public class SdwnController extends ControllerConfig implements Controller
             }
         }
     };
+    private ControllerConfig config;
     private Integer sinkAddress = 0;
     private final Runnable packetBroker = new Runnable()
     {
@@ -223,6 +214,12 @@ public class SdwnController extends ControllerConfig implements Controller
         cntRxPackets.add(POISON_PILL);
         statistics.stop();
         mapUpdater.stop();
+    }
+
+    @Override
+    public void setConfig(ControllerConfig controllerConfig)
+    {
+        this.config = controllerConfig;
     }
 
     @Override

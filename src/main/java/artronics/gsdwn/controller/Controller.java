@@ -1,6 +1,7 @@
 package artronics.gsdwn.controller;
 
 import artronics.chaparMini.exceptions.ChaparConnectionException;
+import artronics.gsdwn.model.ControllerConfig;
 import artronics.gsdwn.packet.Packet;
 
 import java.util.concurrent.BlockingQueue;
@@ -18,4 +19,5 @@ public interface Controller
 
     BlockingQueue<Packet> getCntTxPacketsQueue();
 
+    void setConfig(ControllerConfig controllerConfig);
 }
