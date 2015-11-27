@@ -2,14 +2,12 @@ package artronics.gsdwn.packet;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
 import static artronics.gsdwn.packet.SdwnPacketType.DATA;
 
 @Entity
-@Table(name = "packets")
 @DiscriminatorValue("data")
 public class SdwnDataPacket extends SdwnBasePacket
 {

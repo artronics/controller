@@ -1,16 +1,14 @@
 package artronics.gsdwn.model;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "session")
-public class Session
+public class ControllerSession
 {
     private Long id;
 
-    private Set<ControllerConfig> controllerEntities;
-//    private ControllerConfig controllerEntity;
+    private ControllerConfig controllerConfig;
 
     private String description;
 
@@ -27,17 +25,17 @@ public class Session
         this.id = id;
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "controller_id")
-//    public ControllerConfig getControllerEntity()
-//    {
-//        return controllerEntity;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "controller_id")
+    public ControllerConfig getControllerConfig()
+    {
+        return controllerConfig;
+    }
 
-//    public void setControllerEntity(ControllerConfig controllerEntity)
-//    {
-//        this.controllerEntity = controllerEntity;
-//    }
+    public void setControllerConfig(ControllerConfig controllerConfig)
+    {
+        this.controllerConfig = controllerConfig;
+    }
 
     @Column(name = "description")
     public String getDescription()

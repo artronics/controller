@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-//@Entity
-//@Table(name = "sdwn_controller")
-//@DiscriminatorValue(value = "cnt")
 public class SdwnController extends ControllerConfig implements Controller
 {
     private final static Packet POISON_PILL = new PoisonPacket();
