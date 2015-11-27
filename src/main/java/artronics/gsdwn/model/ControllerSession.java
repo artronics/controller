@@ -26,7 +26,7 @@ public class ControllerSession
     }
 
     @ManyToOne
-    @JoinColumn(name = "controller_id")
+    @JoinColumn(name = "controller_ip")
     public ControllerConfig getControllerConfig()
     {
         return controllerConfig;

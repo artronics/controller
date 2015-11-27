@@ -8,8 +8,6 @@ import java.util.Set;
 @Table(name = "sdwn_controller")
 public class ControllerConfig
 {
-    private Long id;
-
     private String ip;
 
     private Date created;
@@ -18,21 +16,18 @@ public class ControllerConfig
 
     private Set<ControllerSession> controllerSessions;
 
-    public ControllerConfig()
-    {
-    }
-
+    //Do not add generator. By default it is ASSIGNED, means it is assigned by app
+    //TODO add validation
     @Id
-    @GeneratedValue
-    @Column(nullable = false, unique = true)
-    public Long getId()
+    @Column(name = "controller_ip", nullable = false, unique = true)
+    public String getIp()
     {
-        return id;
+        return ip;
     }
 
-    public void setId(Long id)
+    public void setIp(String ip)
     {
-        this.id = id;
+        this.ip = ip;
     }
 
     @OneToMany(mappedBy = "controllerConfig")
@@ -44,18 +39,6 @@ public class ControllerConfig
     public void setControllerSessions(Set<ControllerSession> controllerSessions)
     {
         this.controllerSessions = controllerSessions;
-    }
-
-    //TODO add validation
-    @Column(name = "controller_ip", unique = false, nullable = false)
-    public String getIp()
-    {
-        return ip;
-    }
-
-    public void setIp(String ip)
-    {
-        this.ip = ip;
     }
 
     @PrePersist
