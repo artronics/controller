@@ -22,6 +22,10 @@ public class SdwnBasePacket implements Packet
     @Transient
     private String timeStamp;
 
+    public SdwnBasePacket()
+    {
+    }
+
     public SdwnBasePacket(List<Integer> content)
     {
         this.content = content;

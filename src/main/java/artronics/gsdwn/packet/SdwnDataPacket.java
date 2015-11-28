@@ -13,6 +13,10 @@ public class SdwnDataPacket extends SdwnBasePacket
 {
     public final static int HEADER_INDEX = 10;
 
+    public SdwnDataPacket()
+    {
+    }
+
     private SdwnDataPacket(List<Integer> content)
     {
         super(content);
