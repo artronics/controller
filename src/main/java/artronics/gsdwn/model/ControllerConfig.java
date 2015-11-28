@@ -53,6 +53,7 @@ public class ControllerConfig
         updated = new Date();
     }
 
+    @Column(name = "created", nullable = false)
     public Date getCreated()
     {
         return created;
