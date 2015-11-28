@@ -18,8 +18,8 @@ public class SdwnBasePacket implements Packet
     protected List<Integer> content;
     protected Integer srcShortAddress;
     protected Integer dstShortAddress;
-    private Timestamp receivedAt;
     private Long id;
+    private Timestamp receivedAt;
 
     private ControllerSession controllerSession;
 
@@ -124,7 +124,7 @@ public class SdwnBasePacket implements Packet
     }
 
     @ManyToOne
-    @JoinColumn(name = "session_id")
+    @JoinColumn(name = "session_id", nullable = false)
     public ControllerSession getControllerSession()
     {
         return controllerSession;
