@@ -16,6 +16,15 @@ public class ControllerConfig
 
     private Set<ControllerSession> controllerSessions;
 
+    public ControllerConfig()
+    {
+    }
+
+    public ControllerConfig(String ip)
+    {
+        this.ip = ip;
+    }
+
     //Do not add generator. By default it is ASSIGNED, means it is assigned by app
     //TODO add validation
     @Id
