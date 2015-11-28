@@ -1,6 +1,7 @@
 package artronics.gsdwn.packet;
 
 import artronics.gsdwn.log.Log;
+import artronics.gsdwn.model.ControllerSession;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +16,9 @@ public class SdwnBasePacket implements Packet
     protected Integer srcShortAddress;
     protected Integer dstShortAddress;
     private Long id;
+
+    private ControllerSession controllerSession;
+
     @Transient
     private String timeStamp;
 
@@ -82,6 +86,18 @@ public class SdwnBasePacket implements Packet
     public SdwnPacketType getType()
     {
         return SdwnPacketHelper.getType(content);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "session_id")
+    public ControllerSession getControllerSession()
+    {
+        return controllerSession;
+    }
+
+    public void setControllerSession(ControllerSession controllerSession)
+    {
+        this.controllerSession = controllerSession;
     }
 
     @Override
