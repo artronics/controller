@@ -4,6 +4,8 @@ import artronics.gsdwn.log.Log;
 import artronics.gsdwn.model.ControllerSession;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -12,9 +14,11 @@ import java.util.List;
 @Table(name = "packets")
 public class SdwnBasePacket implements Packet
 {
+    private static long sequence = 0;
     protected List<Integer> content;
     protected Integer srcShortAddress;
     protected Integer dstShortAddress;
+    private Timestamp receivedAt;
     private Long id;
 
     private ControllerSession controllerSession;
@@ -22,6 +26,9 @@ public class SdwnBasePacket implements Packet
     @Transient
     private String timeStamp;
 
+    /**
+     * Never call this constructor. It is for Jpa entity.
+     */
     public SdwnBasePacket()
     {
     }
@@ -33,9 +40,22 @@ public class SdwnBasePacket implements Packet
         this.srcShortAddress = SdwnPacketHelper.getSourceAddress(content);
         this.dstShortAddress = SdwnPacketHelper.getDestinationAddress(content);
 
+        sequence++;
+        this.receivedAt = new Timestamp(new Date().getTime());
+
         Log.PACKET.debug(toString());
     }
 
+    @Column(name = "sequence", nullable = false)
+    public static Long getSequence()
+    {
+        return sequence;
+    }
+
+    public static void setSequence(Long sequence)
+    {
+        SdwnBasePacket.sequence = sequence;
+    }
 
     @Id
     @GeneratedValue
@@ -71,6 +91,17 @@ public class SdwnBasePacket implements Packet
     public void setDstShortAddress(Integer dstShortAddress)
     {
         this.dstShortAddress = dstShortAddress;
+    }
+
+    @Column(name = "received_at", nullable = false)
+    public Timestamp getReceivedAt()
+    {
+        return receivedAt;
+    }
+
+    public void setReceivedAt(Timestamp receivedAt)
+    {
+        this.receivedAt = receivedAt;
     }
 
     @Override
