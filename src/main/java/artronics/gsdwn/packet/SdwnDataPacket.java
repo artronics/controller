@@ -8,7 +8,7 @@ import java.util.List;
 import static artronics.gsdwn.packet.SdwnPacketType.DATA;
 
 @Entity
-@DiscriminatorValue("data")
+@DiscriminatorValue("DATA")
 public class SdwnDataPacket extends SdwnBasePacket
 {
     public final static int HEADER_INDEX = 10;
