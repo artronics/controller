@@ -1,12 +1,7 @@
 package artronics.gsdwn.model;
 
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "sdwn_controller")
@@ -17,8 +12,6 @@ public class ControllerConfig
     private Date created;
 
     private Date updated;
-
-    private List<ControllerSession> controllerSessions;
 
     public ControllerConfig()
     {
@@ -41,19 +34,6 @@ public class ControllerConfig
     public void setIp(String ip)
     {
         this.ip = ip;
-    }
-
-    @OneToMany(mappedBy = "controllerConfig", fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 10)
-    public List<ControllerSession> getControllerSessions()
-    {
-        return controllerSessions;
-    }
-
-    public void setControllerSessions(List<ControllerSession> controllerSessions)
-    {
-        this.controllerSessions = controllerSessions;
     }
 
     @PrePersist

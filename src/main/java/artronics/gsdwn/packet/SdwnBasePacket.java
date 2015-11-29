@@ -1,7 +1,6 @@
 package artronics.gsdwn.packet;
 
 import artronics.gsdwn.log.Log;
-import artronics.gsdwn.model.ControllerSession;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -21,10 +20,8 @@ public class SdwnBasePacket implements Packet
     private Long id;
     private Timestamp receivedAt;
 
-    private ControllerSession controllerSession;
-
-    @Transient
-    private String timeStamp;
+    private Long sessionId;
+    private String controllerIp;
 
     /**
      * Never call this constructor. It is for Jpa entity.
@@ -65,6 +62,33 @@ public class SdwnBasePacket implements Packet
         return id;
     }
 
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    @Column(name = "controller_ip", nullable = false)
+    public String getControllerIp()
+    {
+        return controllerIp;
+    }
+
+    public void setControllerIp(String controllerIp)
+    {
+        this.controllerIp = controllerIp;
+    }
+
+    @Column(name = "session_id", nullable = false)
+    public Long getSessionId()
+    {
+        return sessionId;
+    }
+
+    public void setSessionId(Long session_id)
+    {
+        this.sessionId = session_id;
+    }
+
     @Override
     @Column(name = "src_short_add")
     public Integer getSrcShortAddress()
@@ -76,11 +100,6 @@ public class SdwnBasePacket implements Packet
     public Integer getDstShortAddress()
     {
         return dstShortAddress;
-    }
-
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     public void setSrcShortAddress(Integer srcShortAddress)
@@ -121,18 +140,6 @@ public class SdwnBasePacket implements Packet
     public SdwnPacketType getType()
     {
         return SdwnPacketHelper.getType(content);
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "session_id", nullable = false)
-    public ControllerSession getControllerSession()
-    {
-        return controllerSession;
-    }
-
-    public void setControllerSession(ControllerSession controllerSession)
-    {
-        this.controllerSession = controllerSession;
     }
 
     @Override
