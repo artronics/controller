@@ -17,6 +17,9 @@ public class SdwnBasePacket implements Packet
     protected List<Integer> content;
     protected Integer srcShortAddress;
     protected Integer dstShortAddress;
+    protected Integer netId;
+    protected Integer ttl;
+    protected Integer nextHop;
     private Long id;
     private Timestamp receivedAt;
 
@@ -36,6 +39,14 @@ public class SdwnBasePacket implements Packet
 
         this.srcShortAddress = SdwnPacketHelper.getSourceAddress(content);
         this.dstShortAddress = SdwnPacketHelper.getDestinationAddress(content);
+
+        this.netId = content.get(SdwnPacket.ByteMeaning.NET_ID.getValue());
+        this.ttl = content.get(SdwnPacket.ByteMeaning.TTL.getValue());
+
+        this.nextHop = SdwnPacketHelper.joinAddresses(
+                content.get(SdwnPacket.ByteMeaning.NEXT_HOP_H.getValue()),
+                content.get(SdwnPacket.ByteMeaning.NEXT_HOP_L.getValue())
+        );
 
         sequence++;
         this.receivedAt = new Timestamp(new Date().getTime());
@@ -102,6 +113,21 @@ public class SdwnBasePacket implements Packet
         return dstShortAddress;
     }
 
+    @Override
+    @ElementCollection
+//    @CollectionType(type = "java.util.ArrayList")
+    @CollectionTable(name = "packet_content", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "content")
+    public List<Integer> getContent()
+    {
+        return content;
+    }
+
+    public void setContent(List<Integer> content)
+    {
+        this.content = content;
+    }
+
     public void setSrcShortAddress(Integer srcShortAddress)
     {
         this.srcShortAddress = srcShortAddress;
@@ -123,16 +149,37 @@ public class SdwnBasePacket implements Packet
         this.receivedAt = receivedAt;
     }
 
-    @Override
-    @Transient
-    public List<Integer> getContent()
+    @Column(name = "net_id")
+    public Integer getNetId()
     {
-        return content;
+        return netId;
     }
 
-    public void setContent(List<Integer> content)
+    public void setNetId(Integer netId)
     {
-        this.content = content;
+        this.netId = netId;
+    }
+
+    @Column(name = "ttl")
+    public Integer getTtl()
+    {
+        return ttl;
+    }
+
+    public void setTtl(Integer ttl)
+    {
+        this.ttl = ttl;
+    }
+
+    @Column(name = "next_hop")
+    public Integer getNextHop()
+    {
+        return nextHop;
+    }
+
+    public void setNextHop(Integer nextHop)
+    {
+        this.nextHop = nextHop;
     }
 
     @Override
