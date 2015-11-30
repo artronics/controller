@@ -27,7 +27,10 @@ public class SdwnController extends ControllerConfig implements Controller
     private final DeviceConnection deviceConnection;
     private final BlockingQueue<List<Integer>> chpRxMsg;
     private final BlockingQueue<List<Integer>> chpTxMsg;
+    //This is the queue that other layers will use to retrieve packets
     private final BlockingQueue<Packet> cntRxPackets = new LinkedBlockingQueue<>();
+    //This is the queue that inside controller we will use
+    private final BlockingQueue<Packet> RxPackets = new LinkedBlockingQueue<>();
     private final BlockingQueue<Packet> cntTxPackets = new LinkedBlockingQueue<>();
     //For Statistics
     private final BlockingQueue<Packet> stcPackets = new LinkedBlockingQueue<>();
@@ -51,7 +54,7 @@ public class SdwnController extends ControllerConfig implements Controller
                     if (packet == null) {
                         Log.PACKET.error(new SdwnPacketLogger().logPacket(msg));
                     }
-                    cntRxPackets.add(packet);
+                    RxPackets.add(packet);
 
 
                 }catch (InterruptedException e) {
@@ -92,7 +95,7 @@ public class SdwnController extends ControllerConfig implements Controller
         {
             while (true) {
                 try {
-                    Packet packet = cntRxPackets.take();
+                    Packet packet = RxPackets.take();
                     if (packet == POISON_PILL)
                         break;
 
@@ -100,6 +103,9 @@ public class SdwnController extends ControllerConfig implements Controller
                     stcPackets.add(packet);
 
                     processPacket(packet);
+
+                    //add this packet to rx queue so other layers can access to it
+                    cntRxPackets.add(packet);
 
                 }catch (InterruptedException e) {
                     e.printStackTrace();
